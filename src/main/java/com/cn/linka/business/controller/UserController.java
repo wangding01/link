@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * 测试第一个controller
+ */
 @Controller
 public class UserController {
     @Resource
