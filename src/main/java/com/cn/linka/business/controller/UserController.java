@@ -1,9 +1,11 @@
 package com.cn.linka.business.controller;
 
+import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.User;
 import com.cn.linka.business.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -19,7 +21,14 @@ public class UserController {
 
     @GetMapping("/getUser")
     @ResponseBody
-    List<User> getUser() {
-        return userService.queryUserList();
+    public BaseDaoForHttp<List<User>>  getUser() {
+        return BaseDaoForHttp.success(userService.queryUserList());
+    }
+
+    @PostMapping("/registered")
+    @ResponseBody
+    public BaseDaoForHttp registered(String phone) {
+
+        return BaseDaoForHttp.success();
     }
 }
