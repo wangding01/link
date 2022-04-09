@@ -1,4 +1,4 @@
-package com.cn.linka.common;
+package com.cn.linka.common.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
