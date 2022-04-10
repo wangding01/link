@@ -1,7 +1,13 @@
 package com.cn.linka.business.dao;
 
+import lombok.Data;
+
+import java.io.Serializable;
+
 /**
  * 用户注册成功返回值
  */
-public class UserRegisteredDao {
+@Data
+public class UserRegisteredDao implements Serializable {
+    String userId;
 }

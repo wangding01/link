@@ -8,4 +8,27 @@
     <select id="queryUserList" resultType="com.cn.linka.business.dao.User">
         select * from user
     </select>
+    <select id="selectByEmail" resultType="java.lang.String">
+        select * from user where email = #{email}
+    </select>
+    <insert id="insert" parameterType="com.cn.linka.business.dao.User">
+        INSERT INTO `user` (
+            `user_id`,
+            `user_name`,
+            `password`,
+            `phone`,
+            `email`,
+            `create_dt`
+        )
+        VALUES
+            (
+                #{userId},
+                #{userName},
+                 #{password},
+                #{phone},
+                #{email},
+                #{createDt}
+            )
+    </insert>
+
 </mapper>

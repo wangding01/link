@@ -8,5 +8,9 @@ import java.util.List;
 @Repository
 public interface UserMapper {
     List<User> queryUserList();
+
+    void insert(User user);
+
+    List<User> selectByEmail(String email);
 }
 
