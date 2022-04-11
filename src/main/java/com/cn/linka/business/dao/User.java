@@ -12,6 +12,7 @@ public class User {
     private String password;
     private String email;
     private String phone;
+    private String userImg;
     private String userStatus;
     private Date createDt;
     private Date updateDt;

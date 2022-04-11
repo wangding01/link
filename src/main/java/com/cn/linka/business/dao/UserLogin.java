@@ -12,6 +12,7 @@ public class UserLogin {
     private String email;
     private String phone;
     private String userStatus;
+    private String userImg;
     private Date createDt;
     private Date updateDt;
     private String token;

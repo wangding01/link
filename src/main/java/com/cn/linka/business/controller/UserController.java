@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -44,7 +45,7 @@ public class UserController {
         return userService.checkEmail(email);
     }
 
-    @GetMapping("/get-verify-code")
+    @GetMapping("/get-email-verify-code")
     @ResponseBody
     @ApiOperation("邮箱获取验证码")
     public BaseDaoForHttp getVerifyCode(String email) {
@@ -62,5 +63,17 @@ public class UserController {
     @ApiOperation("用户邮箱登录")
     public BaseDaoForHttp<UserLogin> userEmailLogin(String email, String passWord) {
         return userService.userEmailLogin(email, passWord);
+    }
+    @PostMapping("/user-update")
+    @ResponseBody
+    @ApiOperation("用户信息维护")
+    public BaseDaoForHttp userUpdate(@RequestBody User user) {
+        return userService.userUpdate(user);
+    }
+    @PostMapping("/get-user-by-userId")
+    @ResponseBody
+    @ApiOperation("用户信息查询")
+    public BaseDaoForHttp<User> getUserByUserId(String userId) {
+        return userService.getUserByUserId(userId);
     }
 }

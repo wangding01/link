@@ -25,7 +25,7 @@ public class UserPortalController {
 
     @PostMapping("/portal-insert")
     @ApiOperation("主页新增，allMsg是kv的json")
-    public BaseDaoForHttp portalInsert(UserPortalDao userPortalDao) {
+    public BaseDaoForHttp portalInsert(@RequestBody UserPortalDao userPortalDao) {
         return userPortalService.portalInsert(userPortalDao);
     }
     @GetMapping("/get-portal-by-userId")

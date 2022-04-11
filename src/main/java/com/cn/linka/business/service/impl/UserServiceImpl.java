@@ -12,6 +12,7 @@ import com.cn.linka.common.config.SnowFlake;
 import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -124,6 +125,28 @@ public class UserServiceImpl implements UserService {
             }
         }else {
             return BaseDaoForHttp.fail(7003,"用户名或密码错误");
+        }
+    }
+
+    @Override
+    public BaseDaoForHttp userUpdate(User user) {
+        if(StringUtils.isEmpty(user.getUserId())){
+            return BaseDaoForHttp.fail(7008,"用户id不能为空");
+        }
+        if(userMapper.userUpdate(user)<1){
+            return BaseDaoForHttp.fail(7009,"信息更新失败");
+        }else {
+            return BaseDaoForHttp.success();
+        }
+    }
+
+    @Override
+    public BaseDaoForHttp<User> getUserByUserId(String userId) {
+        Optional<User> optionalUser =userMapper.getUserByUserId(userId);
+        if(optionalUser.isPresent()){
+            return BaseDaoForHttp.success(optionalUser.get());
+        }else {
+            return BaseDaoForHttp.fail(7010,"用户信息不存在");
         }
     }
 

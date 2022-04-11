@@ -11,11 +11,15 @@
     <select id="selectByEmail" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.User">
         select * from user where email = #{email}
     </select>
+    <select id="getUserByUserId" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.User">
+        select * from user where user_id = #{userId}
+    </select>
     <insert id="insert" parameterType="com.cn.linka.business.dao.User">
         INSERT INTO `user` (
             `user_id`,
             `user_name`,
             `password`,
+            `user_img`,
             `phone`,
             `email`,
             `create_dt`
@@ -24,11 +28,20 @@
             (
                 #{userId},
                 #{userName},
-                 #{password},
+                #{password},
+                #{userImg},
                 #{phone},
                 #{email},
                 #{createDt}
             )
     </insert>
-
+    <update id="userUpdate" parameterType="com.cn.linka.business.dao.User">
+        update user
+        <set>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="userImg != null and userImg != ''">user_img = #{userImg}</if>
+        </set>
+        where user_id = #{userId}
+    </update>
 </mapper>

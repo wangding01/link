@@ -1,5 +1,6 @@
 package com.cn.linka.business.mapper;
 
+import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.User;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,9 @@ public interface UserMapper {
     void insert(User user);
 
     Optional<User> selectByEmail(String email);
+
+    int userUpdate(User user);
+
+    Optional<User> getUserByUserId(String userId);
 }
 

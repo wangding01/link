@@ -19,4 +19,8 @@ public interface UserService {
     BaseDaoForHttp checkEmailVerifyCode(String email, String verifyCode);
 
     BaseDaoForHttp<UserLogin> userEmailLogin(String email, String passWord);
+
+    BaseDaoForHttp userUpdate(User user);
+
+    BaseDaoForHttp<User> getUserByUserId(String userId);
 }
