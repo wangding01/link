@@ -2,6 +2,7 @@ package com.cn.linka.business.controller;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.User;
+import com.cn.linka.business.dao.UserLogin;
 import com.cn.linka.business.dao.UserRegisteredDao;
 import com.cn.linka.business.service.UserService;
 import io.swagger.annotations.Api;
@@ -18,14 +19,14 @@ import java.util.List;
  * 测试第一个controller
  */
 @Controller
-@Api(value="用户controller",tags={"用户操作接口"})
+@Api(value = "用户controller", tags = {"用户操作接口"})
 public class UserController {
     @Resource
     private UserService userService;
 
     @GetMapping("/getUser")
     @ResponseBody
-    public BaseDaoForHttp<List<User>>  getUser() {
+    public BaseDaoForHttp<List<User>> getUser() {
         return BaseDaoForHttp.success(userService.queryUserList());
     }
 
@@ -33,14 +34,16 @@ public class UserController {
     @ResponseBody
     @ApiOperation("邮箱注册")
     public BaseDaoForHttp<UserRegisteredDao> registeredForEmail(String email, String verifyCode, String password) {
-        return userService.registered(email,verifyCode,password);
+        return userService.registered(email, verifyCode, password);
     }
+
     @GetMapping("/check-email")
     @ResponseBody
     @ApiOperation("检查邮箱是否被注册")
     public BaseDaoForHttp checkEmail(String email) {
         return userService.checkEmail(email);
     }
+
     @GetMapping("/get-verify-code")
     @ResponseBody
     @ApiOperation("邮箱获取验证码")
@@ -48,4 +51,16 @@ public class UserController {
         return userService.email(email);
     }
 
+    @GetMapping("/check-email-verifyCode")
+    @ResponseBody
+    @ApiOperation("检查邮箱验证码")
+    public BaseDaoForHttp checkEmailVerifyCode(String email, String verifyCode) {
+        return userService.checkEmailVerifyCode(email, verifyCode);
+    }
+    @GetMapping("/user-email-login")
+    @ResponseBody
+    @ApiOperation("用户邮箱登录")
+    public BaseDaoForHttp<UserLogin> userEmailLogin(String email, String passWord) {
+        return userService.userEmailLogin(email, passWord);
+    }
 }

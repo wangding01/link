@@ -3,6 +3,7 @@ package com.cn.linka.common.jwt;
 import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cn.linka.common.exception.BusException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,7 @@ public class JWTInterceptor implements HandlerInterceptor {
             throw new BusException("token不能为空");
         }
         try {
-            JwtUtils.verify(token);
+            DecodedJWT verify = JwtUtils.verify(token);
         } catch (SignatureVerificationException e) {
             log.error("无效签名！ 错误 ->", e);
             return false;

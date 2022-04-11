@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cn.linka.business.mapper.UserPortalMapper">
+
+    <insert id="insert" parameterType="com.cn.linka.business.dao.UserPortalDao">
+        INSERT INTO `user_portal` (
+            `user_id`,
+            `domain`,
+            `index_url`,
+            `all_msg`,
+            `create_dt`
+        )
+        VALUES
+            (
+                #{userId},
+                #{domain},
+                 #{indexUrl},
+                #{allMsg},
+                #{createDt}
+            )
+    </insert>
+
+    <select id="selectByUserId" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.UserPortalDao">
+        select * from user_portal where user_id = #{userId}
+    </select>
+    <select id="getPortalByIndex" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.UserPortalDao">
+        select * from user_portal where index_url = #{index}
+    </select>
+</mapper>

@@ -4,6 +4,7 @@ import com.cn.linka.business.dao.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserMapper {
@@ -11,6 +12,6 @@ public interface UserMapper {
 
     void insert(User user);
 
-    List<User> selectByEmail(String email);
+    Optional<User> selectByEmail(String email);
 }
 

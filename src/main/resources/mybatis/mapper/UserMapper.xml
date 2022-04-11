@@ -8,7 +8,7 @@
     <select id="queryUserList" resultType="com.cn.linka.business.dao.User">
         select * from user
     </select>
-    <select id="selectByEmail" resultType="java.lang.String">
+    <select id="selectByEmail" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.User">
         select * from user where email = #{email}
     </select>
     <insert id="insert" parameterType="com.cn.linka.business.dao.User">
