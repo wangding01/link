@@ -5,7 +5,7 @@
 
 <mapper namespace="com.cn.linka.business.mapper.UserPortalMapper">
 
-    <insert id="insert" parameterType="com.cn.linka.business.dao.UserPortalDao">
+    <insert id="insert" parameterType="com.cn.linka.business.bean.UserPortalBean">
         INSERT INTO `user_portal` (
             `user_id`,
             `domain`,
@@ -23,10 +23,20 @@
             )
     </insert>
 
-    <select id="selectByUserId" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.UserPortalDao">
+    <select id="selectByUserId" parameterType="java.lang.String" resultType="com.cn.linka.business.bean.UserPortalBean">
         select * from user_portal where user_id = #{userId}
     </select>
-    <select id="getPortalByIndex" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.UserPortalDao">
+    <select id="getPortalByIndex" parameterType="java.lang.String" resultType="com.cn.linka.business.bean.UserPortalBean">
         select * from user_portal where index_url = #{index}
     </select>
+
+    <update id="portalUpdate" parameterType="com.cn.linka.business.bean.UserPortalBean">
+        update user_portal
+        <set>
+            <if test="domain != null and domain != ''">`domain` = #{domain},</if>
+            <if test="indexUrl != null and indexUrl != ''">index_url = #{indexUrl},</if>
+            <if test="allMsg != null and allMsg != ''">all_msg = #{allMsg}</if>
+        </set>
+        where user_id = #{userId}
+    </update>
 </mapper>

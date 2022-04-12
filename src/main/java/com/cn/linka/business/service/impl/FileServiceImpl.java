@@ -20,18 +20,19 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public BaseDaoForHttp<FileUploadDao> upload(MultipartFile uploadFile, String userId) {
+        long currentTimeMillis = System.currentTimeMillis();
         String tempPath = filePath;
         File file = new File(tempPath);
         // Temp文件夹是否存在
         if (!file.exists()) {
             file.mkdir();
         }
-        String path = tempPath + userId +"-"+ uploadFile.getOriginalFilename();
+        String path = tempPath + currentTimeMillis +"-"+ uploadFile.getOriginalFilename();
         file = new File(path);
         try {
             // 保存文件
             uploadFile.transferTo(file);
-            String url = "/linkPath/" + userId +"-"+ uploadFile.getOriginalFilename();
+            String url = "/linkPath/" + currentTimeMillis +"-"+ uploadFile.getOriginalFilename();
             return BaseDaoForHttp.success(FileUploadDao.builder().loadUrl(url).build());
         } catch (IOException e) {
             return BaseDaoForHttp.fail(7007, "文件上传异常");

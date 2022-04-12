@@ -24,9 +24,14 @@ public class UserPortalController {
     private UserPortalService userPortalService;
 
     @PostMapping("/portal-insert")
-    @ApiOperation("主页新增，allMsg是kv的json")
+    @ApiOperation("主页新增")
     public BaseDaoForHttp portalInsert(@RequestBody UserPortalDao userPortalDao) {
         return userPortalService.portalInsert(userPortalDao);
+    }
+    @PostMapping("/portal-update")
+    @ApiOperation("主页修改-修改信息是全量送给服务端")
+    public BaseDaoForHttp portalUpdate(@RequestBody UserPortalDao userPortalDao) {
+        return userPortalService.portalUpdate(userPortalDao);
     }
     @GetMapping("/get-portal-by-userId")
     @ApiOperation("userId查询主页信息")

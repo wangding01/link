@@ -10,4 +10,6 @@ public interface UserPortalService {
     BaseDaoForHttp<UserPortalDao> getPortalByUserId(String userId);
 
     BaseDaoForHttp<UserPortalDao> getPortalByIndex(String index);
+
+    BaseDaoForHttp portalUpdate(UserPortalDao userPortalDao);
 }
