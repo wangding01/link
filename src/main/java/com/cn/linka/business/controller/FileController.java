@@ -23,6 +23,7 @@ public class FileController {
     private FileService fileService;
 
     @PostMapping(value = "/upload")
+    @ApiOperation("文件上传")
     public BaseDaoForHttp<FileUploadDao> upload(@ApiParam(value = "上传的文件", required = true) @RequestPart("file") MultipartFile file, @RequestParam("userId") String userId) {
         return fileService.upload(file, userId);
     }
