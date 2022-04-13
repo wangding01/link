@@ -87,6 +87,7 @@ public class UserServiceImpl implements UserService {
                 .phone("邮箱注册-无手机号码")
                 .userName("Link-No-" + userId)
                 .userId(userId)
+                .userImg("")
                 .createDt(new Date())
                 .email(email)
                 .build());

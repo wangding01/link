@@ -16,8 +16,10 @@ import java.util.Calendar;
  */
 public class JwtUtils {
     private static final String secret = "secret";//将sign设置成全局变量
+
     /**
      * 获取token
+     *
      * @param u user
      * @return token
      */
@@ -28,8 +30,8 @@ public class JwtUtils {
         instance.add(Calendar.DATE, 7);
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("userId", u.getUserId())
-                .withClaim("username", u.getUserName());
-        return builder.withExpiresAt(instance.getTime())
+                .withClaim("password", u.getPassword());
+        return "Bearer " + builder.withExpiresAt(instance.getTime())
                 .sign(Algorithm.HMAC256(secret));
     }
 
@@ -37,7 +39,7 @@ public class JwtUtils {
      * 验证token合法性 成功返回token
      */
     public static DecodedJWT verify(String token) throws Exception {
-        if(StringUtils.isEmpty(token)){
+        if (StringUtils.isEmpty(token)) {
             throw new BusException("token不能为空");
         }
         //获取登录用户真正的密码假如数据库查出来的是123456
@@ -45,13 +47,13 @@ public class JwtUtils {
         return build.verify(token);
     }
 
-    public static User getUserByToken(String token){
+    public static User getUserByToken(String token) {
         JWTVerifier build = JWT.require(Algorithm.HMAC256(secret)).build();
         DecodedJWT verify = build.verify(token);
-        String userName = verify.getClaim("userName").asString();
+        String password = verify.getClaim("password").asString();
         String userId = verify.getClaim("userId").asString();
         return User.builder().userId(userId)
-                .userName(userName)
+                .password(password)
                 .build();
     }
 

@@ -58,18 +58,21 @@ public class UserController {
     public BaseDaoForHttp checkEmailVerifyCode(String email, String verifyCode) {
         return userService.checkEmailVerifyCode(email, verifyCode);
     }
+
     @GetMapping("/user-email-login")
     @ResponseBody
     @ApiOperation("用户邮箱登录")
     public BaseDaoForHttp<UserLogin> userEmailLogin(String email, String passWord) {
         return userService.userEmailLogin(email, passWord);
     }
+
     @PostMapping("/user-update")
     @ResponseBody
     @ApiOperation("用户信息维护")
     public BaseDaoForHttp userUpdate(@RequestBody User user) {
         return userService.userUpdate(user);
     }
+
     @PostMapping("/get-user-by-userId")
     @ResponseBody
     @ApiOperation("用户信息查询")
