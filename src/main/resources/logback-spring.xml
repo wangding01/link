@@ -9,7 +9,7 @@
     <property name="PRO_FILE_PATH" value="/linkLog" />
 
     <!-- 开发环境 -->
-    <springProfile name="dev,test">
+    <springProfile name="dev,test,tx">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${PATTERN}</pattern>
