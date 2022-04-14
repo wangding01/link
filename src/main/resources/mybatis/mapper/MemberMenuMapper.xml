@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cn.linka.business.mapper.MemberMenuMapper">
+
+    <select id="queryAll" resultType="com.cn.linka.business.dao.MemberMenuDao">
+        select * from members_menu
+    </select>
+    <insert id="insert" parameterType="com.cn.linka.business.dao.MemberMenuDao">
+        INSERT INTO `members_menu` (
+            `member_menu_name`,
+            `menu_time`,
+            `show_price`,
+            `real_price`,
+            `menu_status`,
+            `create_dt`
+        )
+        VALUES
+            (
+                #{memberMenuName},
+                #{menuTime},
+                #{showPrice},
+                #{realPrice},
+                #{menuStatus},
+                #{createDt}
+            )
+
+    </insert>
+    <update id="update" parameterType="com.cn.linka.business.dao.MemberMenuDao">
+        update members_menu
+        <set>
+            <if test="memberMenuName != null and memberMenuName != ''">member_menu_name = #{memberMenuName},</if>
+            <if test="menuTime != null and menuTime != ''">menu_time = #{menuTime},</if>
+            <if test="showPrice != null and showPrice != ''">show_price = #{showPrice},</if>
+            <if test="realPrice != null and realPrice != ''">real_price = #{realPrice},</if>
+            <if test="menuStatus != null and menuStatus != ''">menu_status = #{menuStatus}</if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

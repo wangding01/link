@@ -10,6 +10,7 @@ import com.cn.linka.business.mapper.UserMapper;
 import com.cn.linka.business.service.UserService;
 import com.cn.linka.common.config.SnowFlake;
 import com.cn.linka.common.exception.BusException;
+import com.cn.linka.common.exception.BusinessExceptionEnum;
 import com.cn.linka.common.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -75,10 +76,10 @@ public class UserServiceImpl implements UserService {
         log.info("注册流程开始");
         if (userMapper.selectByEmail(email).isPresent()) {
             log.info("该邮箱已经注册");
-            return BaseDaoForHttp.fail(7001, "该邮箱已经注册过");
+            throw new BusException(BusinessExceptionEnum.EMAIL_HAS_REGISTERED);
         }
         if (!checkEmailCodeStatus(email, verifyCode)) {
-            return BaseDaoForHttp.fail(7002, "验证码错误");
+            throw new BusException(BusinessExceptionEnum.EMAIL_VERIFY_CODE_ERROR);
         }
         //生产userId
         String userId = SnowFlake.nextIdString();
@@ -101,7 +102,7 @@ public class UserServiceImpl implements UserService {
         log.info("检查邮箱是否注册");
         if (userMapper.selectByEmail(email).isPresent()) {
             log.info("该邮箱已经注册");
-            return BaseDaoForHttp.fail(7001, "该邮箱已经注册过");
+            throw new BusException(BusinessExceptionEnum.EMAIL_HAS_REGISTERED);
         }
         return BaseDaoForHttp.success();
     }
@@ -109,7 +110,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public BaseDaoForHttp checkEmailVerifyCode(String email, String verifyCode) {
         if (!checkEmailCodeStatus(email, verifyCode)) {
-            return BaseDaoForHttp.fail(7002, "验证码错误");
+            throw new BusException(BusinessExceptionEnum.EMAIL_VERIFY_CODE_ERROR);
         }
         return BaseDaoForHttp.success();
     }
@@ -122,20 +123,20 @@ public class UserServiceImpl implements UserService {
             if(passWord.equals(optionalUser.get().getPassword())){
                 return BaseDaoForHttp.success(User.toUserLogin(optionalUser.get(),token));
             }else {
-                return BaseDaoForHttp.fail(7004,"用户名或密码错误");
+                throw new BusException(BusinessExceptionEnum.USERNAME_PASSWORD_ERROR);
             }
         }else {
-            return BaseDaoForHttp.fail(7003,"用户名或密码错误");
+            throw new BusException(BusinessExceptionEnum.USERNAME_PASSWORD_ERROR);
         }
     }
 
     @Override
     public BaseDaoForHttp userUpdate(User user) {
         if(StringUtils.isEmpty(user.getUserId())){
-            return BaseDaoForHttp.fail(7008,"用户id不能为空");
+            throw new BusException(BusinessExceptionEnum.USER_ID_ISNULL);
         }
         if(userMapper.userUpdate(user)<1){
-            return BaseDaoForHttp.fail(7009,"信息更新失败");
+            throw new BusException(BusinessExceptionEnum.USER_MSG_UPDATE_FAIL);
         }else {
             return BaseDaoForHttp.success();
         }
@@ -147,7 +148,7 @@ public class UserServiceImpl implements UserService {
         if(optionalUser.isPresent()){
             return BaseDaoForHttp.success(optionalUser.get());
         }else {
-            return BaseDaoForHttp.fail(7010,"用户信息不存在");
+            throw new BusException(BusinessExceptionEnum.USER_MSG_NOT_EXIST);
         }
     }
 

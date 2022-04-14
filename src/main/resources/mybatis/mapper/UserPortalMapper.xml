@@ -11,14 +11,16 @@
             `domain`,
             `index_url`,
             `all_msg`,
+            `default_theme_id`,
             `create_dt`
         )
         VALUES
             (
                 #{userId},
                 #{domain},
-                 #{indexUrl},
+                #{indexUrl},
                 #{allMsg},
+                #{defaultThemeId},
                 #{createDt}
             )
     </insert>
@@ -35,7 +37,8 @@
         <set>
             <if test="domain != null and domain != ''">`domain` = #{domain},</if>
             <if test="indexUrl != null and indexUrl != ''">index_url = #{indexUrl},</if>
-            <if test="allMsg != null and allMsg != ''">all_msg = #{allMsg}</if>
+            <if test="allMsg != null and allMsg != ''">all_msg = #{allMsg},</if>
+            <if test="defaultThemeId != null and defaultThemeId != ''">default_theme_id = #{defaultThemeId}</if>
         </set>
         where user_id = #{userId}
     </update>

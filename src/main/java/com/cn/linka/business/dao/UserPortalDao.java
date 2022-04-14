@@ -3,6 +3,8 @@ package com.cn.linka.business.dao;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cn.linka.business.bean.UserPortalBean;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,10 +19,16 @@ import java.util.Map;
  * @create: 2022-04-11 14:41
  */
 @Data
+@ApiModel(value="UserPortalDao",description="用户主页信息")
 public class UserPortalDao implements Serializable {
+    @ApiModelProperty("用户id-更新时必传")
     private String userId;
+    @ApiModelProperty("用户二级域名")
     private String indexUrl;
+    @ApiModelProperty("用户域名")
     private String domain;
+    @ApiModelProperty("用户默认主题id")
+    private Long defaultThemeId;
     private List<FactorPortalDao> factorPortalDaos;
     private Date createDt;
 
@@ -28,6 +36,7 @@ public class UserPortalDao implements Serializable {
         UserPortalBean userPortalBean = new UserPortalBean();
         userPortalBean.setCreateDt(userPortalDao.getCreateDt());
         userPortalBean.setDomain(userPortalDao.getDomain());
+        userPortalBean.setDefaultThemeId(userPortalDao.getDefaultThemeId());
         userPortalBean.setIndexUrl(userPortalDao.getIndexUrl());
         userPortalBean.setUserId(userPortalDao.getUserId());
         userPortalBean.setAllMsg(JSON.toJSONString( userPortalDao.getFactorPortalDaos()));

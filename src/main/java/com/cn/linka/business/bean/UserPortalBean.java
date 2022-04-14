@@ -21,6 +21,7 @@ public class UserPortalBean {
     private String userId;
     private String indexUrl;
     private String domain;
+    private Long defaultThemeId;
     private String allMsg;
     private Date createDt;
 
@@ -29,6 +30,7 @@ public class UserPortalBean {
         userPortalDao.setCreateDt(userPortalBean.getCreateDt());
         userPortalDao.setDomain(userPortalBean.getDomain());
         userPortalDao.setIndexUrl(userPortalBean.getIndexUrl());
+        userPortalDao.setDefaultThemeId(userPortalBean.getDefaultThemeId());
         userPortalDao.setUserId(userPortalBean.getUserId());
         List<FactorPortalDao> factorPortalDaos = JSONObject.parseArray(userPortalBean.getAllMsg(), FactorPortalDao.class);
         userPortalDao.setFactorPortalDaos(factorPortalDaos);

@@ -5,6 +5,8 @@ import com.cn.linka.business.dao.FactorPortalDao;
 import com.cn.linka.business.dao.UserPortalDao;
 import com.cn.linka.business.mapper.UserPortalMapper;
 import com.cn.linka.business.service.UserPortalService;
+import com.cn.linka.common.exception.BusException;
+import com.cn.linka.common.exception.BusinessExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -49,10 +51,10 @@ public class UserPortalServiceImpl implements UserPortalService {
     @Override
     public BaseDaoForHttp portalUpdate(UserPortalDao userPortalDao) {
         if(StringUtils.isEmpty(userPortalDao.getUserId())){
-            return BaseDaoForHttp.fail(7008,"用户id不能为空");
+            throw new BusException(BusinessExceptionEnum.USER_ID_ISNULL);
         }
         if(userPortalMapper.portalUpdate(UserPortalDao.transferToBean(userPortalDao))<1){
-            return BaseDaoForHttp.fail(7010,"用户主页信息修改失败");
+            throw new BusException(BusinessExceptionEnum.USER_PORTAL_UPDATE_FAIL);
         }
         return BaseDaoForHttp.success();
     }

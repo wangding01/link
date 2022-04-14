@@ -1,7 +1,8 @@
 package com.cn.linka.common.exception;
 
-import org.springframework.http.HttpStatus;
+import lombok.Data;
 
+@Data
 public class BusException extends RuntimeException {
 
     private Integer errorCode;
@@ -11,7 +12,13 @@ public class BusException extends RuntimeException {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
     }
+
     public BusException(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public BusException(BusinessExceptionEnum businessExceptionEnum) {
+        this.errorMsg = businessExceptionEnum.getName();
+        this.errorCode = businessExceptionEnum.getCode();
     }
 }

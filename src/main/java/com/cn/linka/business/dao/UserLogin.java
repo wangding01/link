@@ -1,11 +1,13 @@
 package com.cn.linka.business.dao;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
 @Builder
 @Data
+@ApiModel(value="UserLogin",description="登陆返回值")
 public class UserLogin {
     private String userId;
     private String userName;

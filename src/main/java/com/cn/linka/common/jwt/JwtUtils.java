@@ -7,6 +7,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cn.linka.business.dao.User;
 import com.cn.linka.common.exception.BusException;
+import com.cn.linka.common.exception.BusinessExceptionEnum;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Calendar;
@@ -40,7 +41,7 @@ public class JwtUtils {
      */
     public static DecodedJWT verify(String token) throws Exception {
         if (StringUtils.isEmpty(token)) {
-            throw new BusException("token不能为空");
+            throw new BusException(BusinessExceptionEnum.AUTHORIZE_IS_NOT_NULL);
         }
         //获取登录用户真正的密码假如数据库查出来的是123456
         JWTVerifier build = JWT.require(Algorithm.HMAC256(secret)).build();
