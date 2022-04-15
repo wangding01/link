@@ -1,10 +1,12 @@
 package com.cn.linka.common.config;
 
+import com.cn.linka.common.utils.RandomStringUtil;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -18,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 @Slf4j
 public class WebLogAspect {
-
     /** 以 controller 包下定义的所有请求为切入点 */
     @Pointcut("execution( * com.cn.linka.business.controller.*.*(..))")
     public void webLog() {}

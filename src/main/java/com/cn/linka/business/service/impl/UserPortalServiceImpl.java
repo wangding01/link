@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +35,11 @@ public class UserPortalServiceImpl implements UserPortalService {
 
     @Override
     public BaseDaoForHttp<UserPortalDao> getPortalByUserId(String userId) {
-        UserPortalDao userPortalDao = UserPortalBean.transferToDao(userPortalMapper.selectByUserId(userId).get());
+        Optional<UserPortalBean> portalByUserId = userPortalMapper.selectByUserId(userId);
+        if(!portalByUserId.isPresent()){
+            throw new BusException(BusinessExceptionEnum.USER_PORTAL_IS_NULL);
+        }
+        UserPortalDao userPortalDao = UserPortalBean.transferToDao(portalByUserId.get());
         List<FactorPortalDao> collect = userPortalDao.getFactorPortalDaos().stream().sorted(Comparator.comparing(FactorPortalDao::getOrder)).collect(Collectors.toList());
         userPortalDao.setFactorPortalDaos(collect);
         return BaseDaoForHttp.success(userPortalDao);
@@ -42,7 +47,11 @@ public class UserPortalServiceImpl implements UserPortalService {
 
     @Override
     public BaseDaoForHttp<UserPortalDao> getPortalByIndex(String index) {
-        UserPortalDao userPortalDao = UserPortalBean.transferToDao(userPortalMapper.getPortalByIndex(index).get());
+        Optional<UserPortalBean> portalByIndex = userPortalMapper.getPortalByIndex(index);
+        if(!portalByIndex.isPresent()){
+            throw new BusException(BusinessExceptionEnum.USER_PORTAL_IS_NULL);
+        }
+        UserPortalDao userPortalDao = UserPortalBean.transferToDao(portalByIndex.get());
         List<FactorPortalDao> collect = userPortalDao.getFactorPortalDaos().stream().sorted(Comparator.comparing(FactorPortalDao::getOrder)).collect(Collectors.toList());
         userPortalDao.setFactorPortalDaos(collect);
         return BaseDaoForHttp.success(userPortalDao);

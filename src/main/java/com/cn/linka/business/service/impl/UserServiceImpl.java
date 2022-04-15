@@ -54,10 +54,10 @@ public class UserServiceImpl implements UserService {
         // 设置邮件接收者
         message.setTo(to);
         // 设置邮件的主题
-        message.setSubject("登录验证码");
+        message.setSubject("注册验证码");
         // 设置邮件的正文
         Integer code = RandomUtil.randomInt(100000, 999999);
-        String text = "您的验证码为：" + code + ",请勿泄露给他人。";
+        String text = "LINKCN:您的验证码为：" + code + ",请勿泄露给他人。";
         message.setText(text);
         // 发送邮件
         try {
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public synchronized BaseDaoForHttp<UserRegisteredDao> registered(String email, String verifyCode, String password) {
+    public BaseDaoForHttp<UserRegisteredDao> registered(String email, String verifyCode, String password) {
         log.info("注册流程开始");
         if (userMapper.selectByEmail(email).isPresent()) {
             log.info("该邮箱已经注册");
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(User.builder()
                 .password(password)
                 .phone("邮箱注册-无手机号码")
-                .userName("Link-No-" + userId)
+                .userName("Link-" + userId)
                 .userId(userId)
                 .userImg("")
                 .createDt(new Date())

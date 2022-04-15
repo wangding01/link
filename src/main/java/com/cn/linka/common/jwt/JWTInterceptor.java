@@ -6,8 +6,10 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.exception.BusinessExceptionEnum;
+import com.cn.linka.common.utils.RandomStringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -19,11 +21,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class JWTInterceptor implements HandlerInterceptor {
+    public final static String REQUEST_ID = "requestId";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        String uuid = RandomStringUtil.createRandomNumber(10);
+        MDC.put(REQUEST_ID, uuid);
         String token = request.getHeader("Authorization");
-        if(StringUtils.isEmpty(token)){
+        log.info("Authorization:{}",token);
+        if (StringUtils.isEmpty(token)) {
             throw new BusException(BusinessExceptionEnum.AUTHORIZE_IS_NOT_NULL);
         }
         try {
@@ -42,6 +48,12 @@ public class JWTInterceptor implements HandlerInterceptor {
             throw new BusException(BusinessExceptionEnum.AUTHORIZE_VERIFY_FAIL);
         }
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        MDC.clear();
+        log.debug("请求结束了");
     }
 }
 

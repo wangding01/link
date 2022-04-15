@@ -33,11 +33,13 @@ public class ThemeController {
     public BaseDaoForHttp<List<ThemeDao>> getAllTheme() {
         return themeService.getAllTheme();
     }
+
     @PostMapping("/insert")
     @ApiOperation("主题新增")
     public BaseDaoForHttp insert(@RequestBody ThemeDao themeDao) {
         return themeService.insert(themeDao);
     }
+
     @PostMapping("/update")
     @ApiOperation("主题更新")
     public BaseDaoForHttp update(@RequestBody ThemeDao themeDao) {

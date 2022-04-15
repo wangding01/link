@@ -30,11 +30,13 @@ public class MemberMenuController {
     public BaseDaoForHttp<List<MemberMenuDao>> getAllTheme() {
         return memberMenuService.getAll();
     }
+
     @PostMapping("/insert")
     @ApiOperation("会员付费菜单新增")
     public BaseDaoForHttp insert(@RequestBody MemberMenuDao memberMenuDao) {
         return memberMenuService.insert(memberMenuDao);
     }
+
     @PostMapping("/update")
     @ApiOperation("会员付费菜单更新")
     public BaseDaoForHttp update(@RequestBody MemberMenuDao memberMenuDao) {
