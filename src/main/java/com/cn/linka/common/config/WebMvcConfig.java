@@ -52,7 +52,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/registered-email",
                         "/get-portal-by-index")
                 .excludePathPatterns("/swagger-ui/**", "/swagger-resources/**", "/webjars/**", "/v3/**", "/swagger-ui.html/**")
-                .excludePathPatterns("/admin/**");
+                .excludePathPatterns("/admin/**")
+                .excludePathPatterns("/linkPath/**");
     }
     /**
      * 跨域支持
