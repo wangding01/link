@@ -25,8 +25,6 @@ public class JWTInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String uuid = RandomStringUtil.createRandomNumber(10);
-        MDC.put(REQUEST_ID, uuid);
         String token = request.getHeader("Authorization");
         log.info("Authorization:{}",token);
         if (StringUtils.isEmpty(token)) {
@@ -50,10 +48,5 @@ public class JWTInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        MDC.clear();
-        log.debug("请求结束了");
-    }
 }
 

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 @Slf4j
 public class WebLogAspect {
+    public final static String REQUEST_ID = "requestId";
     /** 以 controller 包下定义的所有请求为切入点 */
     @Pointcut("execution( * com.cn.linka.business.controller.*.*(..))")
     public void webLog() {}
@@ -32,13 +33,17 @@ public class WebLogAspect {
     @Before("webLog()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
         // 开始打印请求日志
+        String uuid = RandomStringUtil.createRandomNumber(10);
+        MDC.put(REQUEST_ID, uuid);
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
 
         // 打印请求相关参数
         log.info("========================================== Start ==========================================");
-        // 打印请求 url
         log.info("URL            : {}", request.getRequestURL().toString());
+        // 打印请求 url
+        String token = request.getHeader("Authorization");
+        log.info("Authorization            : {}",token);
         // 打印 Http method
         log.info("HTTP Method    : {}", request.getMethod());
         // 打印调用 controller 的全路径以及执行方法
@@ -47,17 +52,6 @@ public class WebLogAspect {
         log.info("IP             : {}", request.getRemoteAddr());
         // 打印请求入参
         log.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
-    }
-
-    /**
-     * 在切点之后织入
-     * @throws Throwable
-     */
-    @After("webLog()")
-    public void doAfter() throws Throwable {
-        log.info("=========================================== End ===========================================");
-        // 每个请求之间空一行
-        log.info("");
     }
 
     /**
@@ -74,6 +68,7 @@ public class WebLogAspect {
         log.info("Response Args  : {}", new Gson().toJson(result));
         // 执行耗时
         log.info("Time-Consuming : {} ms", System.currentTimeMillis() - startTime);
+        MDC.clear();
         return result;
     }
 
