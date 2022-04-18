@@ -12,4 +12,6 @@ public interface MemberMenuService {
     BaseDaoForHttp insert(MemberMenuDao memberMenuDao);
 
     BaseDaoForHttp update(MemberMenuDao memberMenuDao);
+
+    MemberMenuDao getMenuById(Long id);
 }

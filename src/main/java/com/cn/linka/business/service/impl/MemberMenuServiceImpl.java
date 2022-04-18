@@ -37,4 +37,9 @@ public class MemberMenuServiceImpl implements MemberMenuService {
         memberMenuMapper.update(memberMenuDao);
         return BaseDaoForHttp.success();
     }
+
+    @Override
+    public MemberMenuDao getMenuById(Long id) {
+        return memberMenuMapper.getMenuById(id).get();
+    }
 }

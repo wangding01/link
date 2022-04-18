@@ -16,6 +16,9 @@ public enum BusinessExceptionEnum {
     AUTHORIZE_IS_NOT_NULL(7012, "Authorize不能为空"),
     AUTHORIZE_VERIFY_FAIL(7013, "Authorize校验失败"),
     USER_PORTAL_IS_NULL(7014,"用户主页信息不存在"),
+    MENU_NOT_EXIST(7015,"菜单信息不存在"),
+    THE_USER_NO_ORDER(7016,"该用户没有任何订单"),
+    ORDER_ERROR(7017,"订单付款异常"),
     EMAIL_VERIFY_CODE_ERROR(7002, "邮箱验证码错误");
     int code;
     String name;
