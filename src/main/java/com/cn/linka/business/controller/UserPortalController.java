@@ -1,6 +1,7 @@
 package com.cn.linka.business.controller;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
+import com.cn.linka.business.dao.GetPortalByIndexRequest;
 import com.cn.linka.business.dao.UserPortalDao;
 import com.cn.linka.business.dao.UserRegisteredDao;
 import com.cn.linka.business.service.UserPortalService;
@@ -38,10 +39,9 @@ public class UserPortalController {
     public BaseDaoForHttp<UserPortalDao> getPortalByUserId(String userId) {
         return userPortalService.getPortalByUserId(userId);
     }
-
-    @RequestMapping(value = "/get-portal-by-index",method = RequestMethod.GET)
+    @PostMapping("/get-portal-by-index")
     @ApiOperation("index查询-展示主页信息")
-    public BaseDaoForHttp<UserPortalDao> getPortalByUserIndex( String index) {
-        return userPortalService.getPortalByIndex(index);
+    public BaseDaoForHttp<UserPortalDao> getPortalByUserIndex(@RequestBody GetPortalByIndexRequest request) {
+        return userPortalService.getPortalByIndex(request.getIndex());
     }
 }
