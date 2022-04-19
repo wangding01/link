@@ -1,10 +1,12 @@
 package com.cn.linka.business.mapper;
 
 
+import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.ThemeDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ThemeMapper {
@@ -13,5 +15,7 @@ public interface ThemeMapper {
     void insert(ThemeDao themeDao);
 
     void update(ThemeDao themeDao);
+
+    Optional<ThemeDao> getThemeById(Long id);
 }
 

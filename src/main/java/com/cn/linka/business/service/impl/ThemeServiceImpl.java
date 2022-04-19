@@ -34,4 +34,9 @@ public class ThemeServiceImpl implements ThemeService {
         themeMapper.update(themeDao);
         return BaseDaoForHttp.success();
     }
+
+    @Override
+    public BaseDaoForHttp<ThemeDao> getThemeById(Long id) {
+        return BaseDaoForHttp.success(themeMapper.getThemeById(id).orElse(null));
+    }
 }

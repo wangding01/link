@@ -11,4 +11,6 @@ public interface ThemeService {
     BaseDaoForHttp insert(ThemeDao themeDao);
 
     BaseDaoForHttp update(ThemeDao themeDao);
+
+    BaseDaoForHttp<ThemeDao> getThemeById(Long id);
 }
