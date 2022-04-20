@@ -69,4 +69,13 @@ public class UserPortalServiceImpl implements UserPortalService {
         }
         return BaseDaoForHttp.success();
     }
+
+    @Override
+    public BaseDaoForHttp checkIndexExist(String index) {
+        Optional<UserPortalBean> portalByIndex = userPortalMapper.getPortalByIndex(index);
+        if(portalByIndex.isPresent()){
+            throw new BusException(BusinessExceptionEnum.INDEX_EXIST);
+        }
+        return BaseDaoForHttp.success();
+    }
 }

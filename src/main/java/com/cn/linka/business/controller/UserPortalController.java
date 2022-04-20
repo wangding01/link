@@ -40,8 +40,13 @@ public class UserPortalController {
         return userPortalService.getPortalByUserId(userId);
     }
     @PostMapping("/get-portal-by-index")
-    @ApiOperation("index查询-展示主页信息")
+    @ApiOperation("index查询-展示主页信息-外部用户访问")
     public BaseDaoForHttp<UserPortalDao> getPortalByUserIndex(@RequestBody GetPortalByIndexRequest request) {
         return userPortalService.getPortalByIndex(request.getIndex());
+    }
+    @GetMapping("/check-index-exist")
+    @ApiOperation("检查index是否被使用")
+    public BaseDaoForHttp checkIndexExist(String index) {
+        return userPortalService.checkIndexExist(index);
     }
 }

@@ -12,4 +12,6 @@ public interface UserPortalService {
     BaseDaoForHttp<UserPortalDao> getPortalByIndex(String index);
 
     BaseDaoForHttp portalUpdate(UserPortalDao userPortalDao);
+
+    BaseDaoForHttp checkIndexExist(String index);
 }
