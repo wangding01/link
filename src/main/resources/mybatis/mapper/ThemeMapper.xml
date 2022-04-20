@@ -6,7 +6,7 @@
 <mapper namespace="com.cn.linka.business.mapper.ThemeMapper">
 
     <select id="queryTheme" resultType="com.cn.linka.business.dao.ThemeDao">
-        select * from theme
+        select * from theme order by create_dt desc
     </select>
     <select id="getThemeById" parameterType = "java.lang.Long" resultType="com.cn.linka.business.dao.ThemeDao">
         select * from theme where id = #{id}

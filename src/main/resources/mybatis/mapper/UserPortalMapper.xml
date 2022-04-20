@@ -10,6 +10,9 @@
             `user_id`,
             `domain`,
             `index_url`,
+            `portal_head_url`,
+            `introduction`,
+            `user_detail`,
             `all_msg`,
             `default_theme_id`,
             `create_dt`
@@ -19,6 +22,9 @@
                 #{userId},
                 #{domain},
                 #{indexUrl},
+                #{portalHeadUrl},
+                #{introduction},
+                #{userDetail},
                 #{allMsg},
                 #{defaultThemeId},
                 #{createDt}
@@ -28,7 +34,8 @@
     <select id="selectByUserId" parameterType="java.lang.String" resultType="com.cn.linka.business.bean.UserPortalBean">
         select * from user_portal where user_id = #{userId}
     </select>
-    <select id="getPortalByIndex" parameterType="java.lang.String" resultType="com.cn.linka.business.bean.UserPortalBean">
+    <select id="getPortalByIndex" parameterType="java.lang.String"
+            resultType="com.cn.linka.business.bean.UserPortalBean">
         select * from user_portal where index_url = #{index}
     </select>
 
@@ -37,6 +44,9 @@
         <set>
             <if test="domain != null and domain != ''">`domain` = #{domain},</if>
             <if test="indexUrl != null and indexUrl != ''">index_url = #{indexUrl},</if>
+            <if test="portalHeadUrl != null and portalHeadUrl != ''">portal_head_url = #{portalHeadUrl},</if>
+            <if test="introduction != null and introduction != ''">introduction = #{introduction},</if>
+            <if test="userDetail != null and userDetail != ''">user_detail = #{userDetail},</if>
             <if test="allMsg != null and allMsg != ''">all_msg = #{allMsg},</if>
             <if test="defaultThemeId != null and defaultThemeId != ''">default_theme_id = #{defaultThemeId}</if>
         </set>
