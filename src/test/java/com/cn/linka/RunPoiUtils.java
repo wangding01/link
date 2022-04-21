@@ -66,7 +66,7 @@ public class RunPoiUtils {
         //创建段落中的run
         XWPFRun run = paragraphX.createRun();
         run.setText(map.get("detail").toString());
-        String path="D://work//other//zuowen-jtcl//"+fileName+".docx";
+        String path="D://JAVA//project//freemaker//"+fileName+".docx";
         FileOutputStream stream=null;
         try {
             File file = new File(path);
