@@ -40,7 +40,7 @@
             <if test="themeType != null and themeType != ''">theme_type = #{themeType},</if>
             <if test="themeStatus != null and themeStatus != ''">theme_status = #{themeStatus},</if>
             <if test="themeUrl != null and themeUrl != ''">theme_url = #{themeUrl},</if>
-            <if test="themeDate != null and themeDate != ''">theme_data = #{themeDate},</if>
+            <if test="themeData != null and themeData != ''">theme_data = #{themeData},</if>
             <if test="themeThumbnailUrl != null and themeThumbnailUrl != ''">theme_thumbnail_url = #{themeThumbnailUrl}</if>
         </set>
         where id = #{id}
