@@ -1,6 +1,7 @@
 package com.cn.linka.business.controller;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
+import com.cn.linka.business.dao.FileDownLoadDao;
 import com.cn.linka.business.dao.FileUploadDao;
 import com.cn.linka.business.service.FileService;
 import io.swagger.annotations.*;
@@ -22,10 +23,22 @@ public class FileController {
     @Resource
     private FileService fileService;
 
+    @Deprecated
     @PostMapping(value = "/upload")
     @ApiOperation("文件上传")
     public BaseDaoForHttp<FileUploadDao> upload(@ApiParam(value = "上传的文件", required = true) @RequestPart("file") MultipartFile file, @RequestParam("userId") String userId) {
         return fileService.upload(file, userId);
     }
 
+    @PostMapping(value = "/upload-to-cos")
+    @ApiOperation("文件上传到cos--注意文件的预览地址为cosBaseUrl/loadUrl")
+    public BaseDaoForHttp<FileUploadDao> uploadToCos(@ApiParam(value = "上传的文件", required = true) @RequestPart("file") MultipartFile file, @RequestParam("userId") String userId) {
+        return fileService.uploadToCos(file, userId);
+    }
+
+//    @GetMapping(value = "/download-by-cos")
+//    @ApiOperation("文件下载")
+//    public BaseDaoForHttp<FileDownLoadDao> downLoadByCos(@ApiParam(value = "上传COS的key", required = true) String key) {
+//        return fileService.downLoadByCos(key);
+//    }
 }

@@ -11,7 +11,6 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class FileUploadDao {
-    private String cosBaseUrl;
-    private String loadUrl;
+public class FileDownLoadDao {
+    private String downLoadStr;
 }

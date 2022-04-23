@@ -20,6 +20,8 @@ public enum BusinessExceptionEnum {
     THE_USER_NO_ORDER(7016,"该用户没有任何订单"),
     ORDER_ERROR(7017,"订单付款异常"),
     INDEX_EXIST(7018,"该index已经被使用"),
+    FILE_DOWNLOAD_FAIL(7019,"文件下载失败"),
+    FILE_UPLOAD_FAIL(7020,"文件上传失败"),
     EMAIL_VERIFY_CODE_ERROR(7002, "邮箱验证码错误");
     int code;
     String name;
