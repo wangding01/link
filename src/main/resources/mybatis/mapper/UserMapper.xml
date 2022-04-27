@@ -35,12 +35,18 @@
                 #{createDt}
             )
     </insert>
-    <update id="userUpdate" parameterType="com.cn.linka.business.dao.User">
+    <update id="userUpdate" parameterType="com.cn.linka.business.dao.UserUpdate">
         update user
         <set>
             <if test="userName != null and userName != ''">user_name = #{userName},</if>
-            <if test="password != null and password != ''">password = #{password},</if>
             <if test="userImg != null and userImg != ''">user_img = #{userImg}</if>
+        </set>
+        where user_id = #{userId}
+    </update>
+    <update id="userUpdatePassword" parameterType="com.cn.linka.business.dao.UserUpdatePasswordDao">
+        update user
+        <set>
+            <if test="password != null and password != ''">password = #{password}</if>
         </set>
         where user_id = #{userId}
     </update>

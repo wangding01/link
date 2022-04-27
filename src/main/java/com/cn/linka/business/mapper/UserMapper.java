@@ -2,6 +2,8 @@ package com.cn.linka.business.mapper;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.User;
+import com.cn.linka.business.dao.UserUpdate;
+import com.cn.linka.business.dao.UserUpdatePasswordDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,8 +17,10 @@ public interface UserMapper {
 
     Optional<User> selectByEmail(String email);
 
-    int userUpdate(User user);
+    int userUpdate(UserUpdate user);
 
     Optional<User> getUserByUserId(String userId);
+
+    int userUpdatePassword(UserUpdatePasswordDao user);
 }
 

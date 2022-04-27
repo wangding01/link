@@ -2,10 +2,7 @@ package com.cn.linka.business.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.extra.mail.MailException;
-import com.cn.linka.business.dao.BaseDaoForHttp;
-import com.cn.linka.business.dao.User;
-import com.cn.linka.business.dao.UserLogin;
-import com.cn.linka.business.dao.UserRegisteredDao;
+import com.cn.linka.business.dao.*;
 import com.cn.linka.business.mapper.UserMapper;
 import com.cn.linka.business.service.UserService;
 import com.cn.linka.common.config.SnowFlake;
@@ -86,7 +83,7 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(User.builder()
                 .password(password)
                 .phone("邮箱注册-无手机号码")
-                .userName("Link-" + userId)
+                .userName("Link用户")
                 .userId(userId)
                 .userImg("")
                 .createDt(new Date())
@@ -117,38 +114,50 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BaseDaoForHttp<UserLogin> userEmailLogin(String email, String passWord) {
-        Optional<User> optionalUser =  userMapper.selectByEmail(email);
-        if(optionalUser.isPresent()){
+        Optional<User> optionalUser = userMapper.selectByEmail(email);
+        if (optionalUser.isPresent()) {
             String token = JwtUtils.getToken(optionalUser.get());
-            if(passWord.equals(optionalUser.get().getPassword())){
-                return BaseDaoForHttp.success(User.toUserLogin(optionalUser.get(),token));
-            }else {
+            if (passWord.equals(optionalUser.get().getPassword())) {
+                return BaseDaoForHttp.success(User.toUserLogin(optionalUser.get(), token));
+            } else {
                 throw new BusException(BusinessExceptionEnum.USERNAME_PASSWORD_ERROR);
             }
-        }else {
+        } else {
             throw new BusException(BusinessExceptionEnum.USERNAME_PASSWORD_ERROR);
         }
     }
 
     @Override
-    public BaseDaoForHttp userUpdate(User user) {
-        if(StringUtils.isEmpty(user.getUserId())){
+    public BaseDaoForHttp userUpdate(UserUpdate user) {
+        if (StringUtils.isEmpty(user.getUserId())) {
             throw new BusException(BusinessExceptionEnum.USER_ID_ISNULL);
         }
-        if(userMapper.userUpdate(user)<1){
+        if (userMapper.userUpdate(user) < 1) {
             throw new BusException(BusinessExceptionEnum.USER_MSG_UPDATE_FAIL);
-        }else {
+        } else {
             return BaseDaoForHttp.success();
         }
     }
 
     @Override
     public BaseDaoForHttp<User> getUserByUserId(String userId) {
-        Optional<User> optionalUser =userMapper.getUserByUserId(userId);
-        if(optionalUser.isPresent()){
+        Optional<User> optionalUser = userMapper.getUserByUserId(userId);
+        if (optionalUser.isPresent()) {
             return BaseDaoForHttp.success(optionalUser.get());
-        }else {
+        } else {
             throw new BusException(BusinessExceptionEnum.USER_MSG_NOT_EXIST);
+        }
+    }
+
+    @Override
+    public BaseDaoForHttp userUpdatePassword(UserUpdatePasswordDao user) {
+        if (!checkEmailCodeStatus(user.getEmail(), user.getVerifyCode())) {
+            throw new BusException(BusinessExceptionEnum.EMAIL_VERIFY_CODE_ERROR);
+        }
+        if (userMapper.userUpdatePassword(user) < 1) {
+            throw new BusException(BusinessExceptionEnum.USER_PASSWORD_UPDATE_FAIL);
+        } else {
+            return BaseDaoForHttp.success();
         }
     }
 

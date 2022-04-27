@@ -1,9 +1,6 @@
 package com.cn.linka.business.controller;
 
-import com.cn.linka.business.dao.BaseDaoForHttp;
-import com.cn.linka.business.dao.User;
-import com.cn.linka.business.dao.UserLogin;
-import com.cn.linka.business.dao.UserRegisteredDao;
+import com.cn.linka.business.dao.*;
 import com.cn.linka.business.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -66,8 +63,15 @@ public class UserController {
     @PostMapping("/user-update")
     @ResponseBody
     @ApiOperation("用户信息维护")
-    public BaseDaoForHttp userUpdate(@RequestBody User user) {
+    public BaseDaoForHttp userUpdate(@RequestBody UserUpdate user) {
         return userService.userUpdate(user);
+    }
+
+    @PostMapping("/user-update-password")
+    @ResponseBody
+    @ApiOperation("用户修改密码")
+    public BaseDaoForHttp userUpdatePassword(@RequestBody UserUpdatePasswordDao user) {
+        return userService.userUpdatePassword(user);
     }
 
     @PostMapping("/get-user-by-userId")

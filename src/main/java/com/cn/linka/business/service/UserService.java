@@ -1,9 +1,6 @@
 package com.cn.linka.business.service;
 
-import com.cn.linka.business.dao.BaseDaoForHttp;
-import com.cn.linka.business.dao.User;
-import com.cn.linka.business.dao.UserLogin;
-import com.cn.linka.business.dao.UserRegisteredDao;
+import com.cn.linka.business.dao.*;
 
 import java.util.List;
 
@@ -20,7 +17,9 @@ public interface UserService {
 
     BaseDaoForHttp<UserLogin> userEmailLogin(String email, String passWord);
 
-    BaseDaoForHttp userUpdate(User user);
+    BaseDaoForHttp userUpdate(UserUpdate user);
 
     BaseDaoForHttp<User> getUserByUserId(String userId);
+
+    BaseDaoForHttp userUpdatePassword(UserUpdatePasswordDao user);
 }
