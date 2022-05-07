@@ -23,6 +23,9 @@ public enum BusinessExceptionEnum {
     FILE_DOWNLOAD_FAIL(7019,"文件下载失败"),
     FILE_UPLOAD_FAIL(7020,"文件上传失败"),
     USER_PASSWORD_UPDATE_FAIL(7021, "用户密码更新失败"),
+    WX_PAY_ORDER_FAIL(7022, "微信拉起失败"),
+    WX_PAY_BACK_SIGN_FAIL(7023, "微信回调签名验证失败"),
+    WX_PAY_BACK_ORDER_FAIL(7024, "微信回调订单不存在或已经支付"),
     EMAIL_VERIFY_CODE_ERROR(7002, "邮箱验证码错误");
     int code;
     String name;

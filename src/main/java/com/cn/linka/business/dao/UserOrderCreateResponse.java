@@ -12,4 +12,6 @@ import java.io.Serializable;
 public class UserOrderCreateResponse implements Serializable {
     @ApiModelProperty("用户id")
     private String orderId;
+    @ApiModelProperty("微信跳转地址")
+    private String wxUrl;
 }

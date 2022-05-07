@@ -24,9 +24,9 @@ public class MemberMenuDao implements Serializable {
     @ApiModelProperty("此菜单有效期（天）")
     private Integer menuTime;
     @ApiModelProperty("折扣前价格")
-    private BigDecimal showPrice;
+    private Integer showPrice;
     @ApiModelProperty("折扣后价格-真实售价")
-    private BigDecimal realPrice;
+    private Integer realPrice;
     @ApiModelProperty("菜单状态：1正常在售")
     private String menuStatus;
     private Date createDt;

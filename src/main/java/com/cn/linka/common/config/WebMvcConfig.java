@@ -1,10 +1,8 @@
 package com.cn.linka.common.config;
 
 import com.cn.linka.common.jwt.JWTInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -35,6 +33,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/thymeleaf/**")
+                .addResourceLocations("classpath:/thymeleaf/");
     }
 
     @Override
@@ -58,6 +58,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/favicon.ico")
                 .excludePathPatterns("/download-by-cos/*")
                 .excludePathPatterns("/event-record")
+                .excludePathPatterns("/link-test/**")
+                .excludePathPatterns("/thymeleaf/**")
+                .excludePathPatterns("/wxPay/**")//上线删除
                 .excludePathPatterns("/linkPath/*");
     }
     /**

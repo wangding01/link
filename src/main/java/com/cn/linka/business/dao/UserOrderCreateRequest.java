@@ -13,4 +13,6 @@ public class UserOrderCreateRequest implements Serializable {
     private String userId;
     @ApiModelProperty("菜单id")
     private String menuId;
+    @ApiModelProperty("用户真实ip")
+    private String realIp;
 }

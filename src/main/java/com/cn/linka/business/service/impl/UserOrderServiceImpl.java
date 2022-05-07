@@ -7,6 +7,8 @@ import com.cn.linka.business.mapper.MemberMenuMapper;
 import com.cn.linka.business.mapper.UserOrderMapper;
 import com.cn.linka.business.service.MemberMenuService;
 import com.cn.linka.business.service.UserOrderService;
+import com.cn.linka.business.wxpay.WxPayDto;
+import com.cn.linka.business.wxpay.WxPayService;
 import com.cn.linka.common.config.SnowFlake;
 import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.exception.BusinessExceptionEnum;
@@ -26,6 +28,8 @@ public class UserOrderServiceImpl implements UserOrderService {
     private UserOrderMapper userOrderMapper;
     @Resource
     private MemberMenuMapper memberMenuMapper;
+    @Resource
+    private WxPayService wxPayService;
 
     @Override
     public BaseDaoForHttp<UserOrderCreateResponse> createOrder(UserOrderCreateRequest userOrderCreateRequest) {
@@ -41,6 +45,18 @@ public class UserOrderServiceImpl implements UserOrderService {
                 .orderStatus(ORDER_INIT_STATUS)
                 .build();
         userOrderMapper.insert(build);
+        WxPayDto dto = WxPayDto.builder()
+                .totalFee(menuById.get().getRealPrice())
+                .outTradeNo(orderId)
+                .realIp(userOrderCreateRequest.getRealIp())
+                .body(menuById.get().getMemberMenuName())
+                .build();
+        try {
+            wxPayService.pay(dto);
+        }catch (Exception e){
+            log.error("微信支付拉起失败：{}",e.getMessage());
+        }
+
         return BaseDaoForHttp.success(UserOrderCreateResponse.builder().orderId(orderId).build());
     }
 
