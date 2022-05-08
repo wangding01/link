@@ -114,8 +114,9 @@ public class CommUtils {
      * @return 签名结果
      */
     public static String sign(String text, String key, String input_charset) {
+        System.out.println("text："+text);
         text = text + "&key=" + key;
-        System.out.println(text);
+        System.out.println("最终参数为："+text);
         return DigestUtils.md5Hex(getContentBytes(text, input_charset));
     }
 

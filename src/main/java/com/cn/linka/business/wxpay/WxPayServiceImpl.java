@@ -1,10 +1,8 @@
 package com.cn.linka.business.wxpay;
 
 import com.alibaba.fastjson.JSON;
-import com.cn.linka.business.dao.BaseDaoForHttp;
-import com.cn.linka.business.dao.UserOrderDao;
 import com.cn.linka.business.mapper.UserOrderMapper;
-import com.cn.linka.business.service.MemberMenuService;
+import com.cn.linka.business.wxpay.sdkUtil.WXPayUtil;
 import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.exception.BusinessExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -74,36 +72,18 @@ public class WxPayServiceImpl implements WxPayService {
         Map<String, String> packageParams = new HashMap<>();
         packageParams.put("appid", appId);
         packageParams.put("mch_id", mch_id);
-        packageParams.put("nonce_str", nonce_str);
-        packageParams.put("body", body);
-        packageParams.put("out_trade_no", outTradeNo);
-////        double t = DoubleUtil.parseDouble(totalFee);//保留两位小数
-//        int aDouble = Integer.parseInt(new java.text.DecimalFormat("0").format(t*100));
-        packageParams.put("total_fee", totalFee + "");
         packageParams.put("spbill_create_ip", spbill_create_ip);
         packageParams.put("notify_url", notify_url);
         packageParams.put("trade_type", "MWEB");
         packageParams.put("scene_info", scene_info);
-//        packageParams.put("openid", openid);
-
-        packageParams = CommUtils.paraFilter(packageParams);
-        String prestr = CommUtils.createLinkString(packageParams);
-        String sign = CommUtils.sign(prestr, key, "utf-8").toUpperCase();
+        packageParams.put("nonce_str", nonce_str);
+        packageParams.put("body", body);
+        packageParams.put("out_trade_no", outTradeNo);
+        packageParams.put("total_fee", totalFee + "");
+        String sign = WXPayUtil.generateSignature(packageParams,key);
         log.info("统一下单请求签名：" + sign);
-        String xml = "<xml version='1.0' encoding='gbk'>" + "<appid>" + appId + "</appid>"
-                + "<body><![CDATA[" + body + "]]></body>"
-                + "<mch_id>" + mch_id + "</mch_id>"
-                + "<nonce_str>" + nonce_str + "</nonce_str>"
-                + "<notify_url>" + notify_url + "</notify_url>"
-                + "<openid>" + openid + "</openid>"
-                + "<out_trade_no>" + outTradeNo + "</out_trade_no>"
-                + "<spbill_create_ip>" + spbill_create_ip + "</spbill_create_ip>"
-                + "<total_fee>" + totalFee + "" + "</total_fee>"
-                + "<trade_type>" + "MWEB" + "</trade_type>"
-                + "<sign>" + sign + "</sign>"
-                + "<scene_info>" + scene_info + "</scene_info>"
-                + "</xml>";
-
+        String xml = WXPayUtil.generateSignedXml(packageParams,key);
+        log.info(xml);
         String result = CommUtils.httpRequest(CommUtils.unifiedOrderUrl, "POST", xml);
         Map map = CommUtils.doXMLParse(result);
         log.info("统一下单返回map：" + map.toString());
