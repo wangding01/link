@@ -9,10 +9,14 @@ import java.util.Optional;
 
 @Repository
 public interface UserOrderMapper {
-    Optional<List<UserOrderBean>> queryAllByUserId(String userId);
+    List<UserOrderBean> queryAllByUserId(String userId);
+
+    Optional<UserOrderBean> queryAllByOrderId(String userId,String orderId);
 
     void insert(UserOrderBean userOrderBean);
 
-    int updateStatus(String orderId);
+    int updateStatus(String orderId,String otherId);
+
+    int updateStatusByOrderId(String otherId,String orderStatus);
 }
 

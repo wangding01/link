@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @ApiModel(value = "UserOrderCreateResponse", description = "创建订单返回体")
 public class UserOrderCreateResponse implements Serializable {
-    @ApiModelProperty("用户id")
+    @ApiModelProperty("订单id")
     private String orderId;
     @ApiModelProperty("微信跳转地址")
     private String wxUrl;

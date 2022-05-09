@@ -80,32 +80,13 @@ public class WxPayServiceImpl implements WxPayService {
         packageParams.put("body", body);
         packageParams.put("out_trade_no", outTradeNo);
         packageParams.put("total_fee", totalFee + "");
-        String sign = WXPayUtil.generateSignature(packageParams,key);
-        log.info("统一下单请求签名：" + sign);
-        String xml = WXPayUtil.generateSignedXml(packageParams,key);
+        String xml = WXPayUtil.generateSignedXml(packageParams, key);
         log.info(xml);
         String result = CommUtils.httpRequest(CommUtils.unifiedOrderUrl, "POST", xml);
         Map map = CommUtils.doXMLParse(result);
         log.info("统一下单返回map：" + map.toString());
         Object return_code = map.get("return_code");
         Object return_msg = map.get("return_msg");
-//        if(return_code == "SUCCESS"  || return_code.equals(return_code)){
-//            Map<String,String> resultMap=new HashMap<String, String>();
-//            String prepay_id = (String) map.get("prepay_id");
-//            resultMap.put("appId", appId);
-//            Long timeStamp = System.currentTimeMillis() / 1000;
-//            resultMap.put("timeStamp", timeStamp + "");
-//            resultMap.put("nonceStr", nonce_str);
-//            resultMap.put("package", "prepay_id=" + prepay_id);
-//            resultMap.put("signType", "MD5");
-//            log.info("参与paySign签名数据, 入参:{}", JSON.toJSONString(resultMap));
-//            String linkString = CommUtils.createLinkString(resultMap);
-//            String paySign = CommUtils.sign(linkString, key, "utf-8").toUpperCase();
-//            log.info("获取到paySign:"+paySign);
-//            resultMap.put("paySign", paySign);
-//            return BaseDaoForHttp.success();
-//        }
-//        return BaseDaoForHttp.fail();
         if (return_code == "SUCCESS" && return_msg == "OK") {
             log.info("微信支付成功拉起");
             String mweb_url = (String) map.get("mweb_url");
@@ -138,24 +119,17 @@ public class WxPayServiceImpl implements WxPayService {
         br.close();
         String notityXml = sb.toString();
         log.info("支付回调返回数据：" + notityXml);
+        if (!WXPayUtil.isSignatureValid(notityXml, key)) {
+            throw new BusException(BusinessExceptionEnum.WX_PAY_BACK_SIGN_FAIL);
+        }
         Map map = CommUtils.doXMLParse(notityXml);
         Object returnCode = map.get("return_code");
         Object result_code = map.get("result_code");
         if ("SUCCESS".equals(returnCode) && "SUCCESS".equals(result_code)) {
-            Map<String, String> validParams = CommUtils.paraFilter(map);  //回调验签时需要去除sign和空值参数
-            String validStr = CommUtils.createLinkString(validParams);//把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
-            String sign = CommUtils.sign(validStr, key, "utf-8").toUpperCase();//拼装生成服务器端验证的签名
-            log.info("支付回调生成签名：" + sign);
-//            String transaction_id = (String) map.get("transaction_id");
             String order_no = (String) map.get("out_trade_no");
-//            String time_end = (String) map.get("time_end");
-//            String total_fee = (String) map.get("total_fee");
-            //签名验证
-            if (!sign.equals(map.get("sign"))) {
-                throw new BusException(BusinessExceptionEnum.WX_PAY_BACK_SIGN_FAIL);
-            }
+            String otherId = (String) map.get("open_id");
             //修改本地数据库操作
-            if (!(userOrderMapper.updateStatus(order_no) == 1)) {
+            if (!(userOrderMapper.updateStatus(order_no,otherId) == 1)) {
                 throw new BusException(BusinessExceptionEnum.WX_PAY_BACK_ORDER_FAIL);
             }
             resXml = CommUtils.SUCCESSxml;
@@ -168,5 +142,43 @@ public class WxPayServiceImpl implements WxPayService {
         out.write(resXml.getBytes());
         out.flush();
         out.close();
+    }
+
+    @Override
+    public WxPayQueryBean checkWxPayOrder(String oderId){
+        log.info("查询微信支付的订单");
+        String nonce_str = CommUtils.getRandomStringByLength(32);
+        Map<String, String> packageParams = new HashMap<>();
+        packageParams.put("appid", appId);
+        packageParams.put("mch_id", mch_id);
+        packageParams.put("notify_url", notify_url);
+        packageParams.put("nonce_str", nonce_str);
+        packageParams.put("out_trade_no", oderId);
+        Map map = null;
+        try {
+            String xml = WXPayUtil.generateSignedXml(packageParams, key);
+            log.info(xml);
+            String result = CommUtils.httpRequest(CommUtils.orderquery, "POST", xml);
+            map = CommUtils.doXMLParse(result);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("微信订单查询调用异常");
+        }
+        log.info("订单查询返回map：" + map.toString());
+        Object return_code = map.get("return_code");
+        Object return_msg = map.get("return_msg");
+        String openId = (String) map.get("openid");
+        String tradeState =  (String) map.get("trade_state");
+        if (return_code == "SUCCESS" && return_msg == "OK") {
+            log.info("订单支付成功");
+            return WxPayQueryBean.builder()
+                    .orderId(oderId)
+                    .tradeState(tradeState)
+                    .openId(openId).build();
+        } else {
+            log.info("订单支付失败");
+            throw new BusException(BusinessExceptionEnum.WX_PAY_ORDER_CHECK_ERROR);
+        }
+
     }
 }

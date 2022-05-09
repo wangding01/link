@@ -26,6 +26,8 @@ public enum BusinessExceptionEnum {
     WX_PAY_ORDER_FAIL(7022, "微信拉起失败"),
     WX_PAY_BACK_SIGN_FAIL(7023, "微信回调签名验证失败"),
     WX_PAY_BACK_ORDER_FAIL(7024, "微信回调订单不存在或已经支付"),
+    ORDER_ID_IS_NULL(7025, "订单信息不存在"),
+    WX_PAY_ORDER_CHECK_ERROR(7026, "微信支付查询订单失败"),
     EMAIL_VERIFY_CODE_ERROR(7002, "邮箱验证码错误");
     int code;
     String name;

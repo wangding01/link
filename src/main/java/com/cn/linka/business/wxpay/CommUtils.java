@@ -31,6 +31,7 @@ import java.util.*;
 public class CommUtils {
     /**微信支付统一下单接口*/
     public static final String unifiedOrderUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    public static final String orderquery = "https://api.mch.weixin.qq.com/pay/orderquery";
 
 
     public static String SUCCESSxml = "<xml> \r\n" +

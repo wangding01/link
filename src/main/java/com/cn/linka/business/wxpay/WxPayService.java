@@ -15,4 +15,6 @@ public interface WxPayService {
     String pay(WxPayDto dto) throws Exception;
 
     void notify(HttpServletRequest request, HttpServletResponse response) throws Exception;
+
+    WxPayQueryBean checkWxPayOrder(String oderId);
 }

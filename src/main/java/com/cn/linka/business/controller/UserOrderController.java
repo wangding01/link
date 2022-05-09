@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @program: linka
@@ -29,9 +30,16 @@ public class UserOrderController {
     public BaseDaoForHttp<UserOrderCreateResponse> createOrder(@RequestBody UserOrderCreateRequest userOrderCreateRequest) {
         return userOrderService.createOrder(userOrderCreateRequest);
     }
+
     @GetMapping(value = "/get-order-by-userId")
     @ApiOperation("查询订单")
-    public BaseDaoForHttp<UserOrderDao> getOrder(String userId) {
+    public BaseDaoForHttp<List<UserOrderDao>> getOrder(String userId) {
         return userOrderService.getOrder(userId);
+    }
+
+    @GetMapping(value = "/get-order-by-orderId")
+    @ApiOperation("查询订单-orderId")
+    public BaseDaoForHttp<UserOrderDao> getOrderByOrderId(String userId, String orderId) {
+        return userOrderService.getOrderByOrderId(userId, orderId);
     }
 }
