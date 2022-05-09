@@ -4,9 +4,9 @@
     <!-- 文件输出格式 -->
     <property name="PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] -[%X{requestId}]- %c [%L] -| %msg%n" />
     <!-- test文件路径 -->
-    <property name="TEST_FILE_PATH" value="/linkLog" />
+    <property name="TEST_FILE_PATH" value="./linkLog" />
     <!-- pro文件路径 -->
-    <property name="PRO_FILE_PATH" value="/linkLog" />
+    <property name="PRO_FILE_PATH" value="./linkLog" />
 
     <!-- 开发环境 -->
     <springProfile name="dev">
@@ -28,7 +28,7 @@
         <!-- 每天产生一个文件 -->
         <appender name="TEST-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <!-- 文件路径 -->
-            <file>${TEST_FILE_PATH}</file>
+            <file>${TEST_FILE_PATH}/info.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <!-- 文件名称 -->
                 <fileNamePattern>${TEST_FILE_PATH}/info.%d{yyyy-MM-dd}.log</fileNamePattern>
