@@ -37,7 +37,7 @@ public class WxPayServiceImpl implements WxPayService {
 
     public String key;
 
-    @Value("${gzh.appid}")
+    @Value("${link.appid}")
     public void setAppId(String appId) {
         this.appId = appId;
     }
