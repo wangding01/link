@@ -3,6 +3,7 @@ package com.cn.linka.business.wxpay;
 import com.alibaba.fastjson.JSON;
 import com.cn.linka.business.bean.UserOrderBean;
 import com.cn.linka.business.mapper.UserOrderMapper;
+import com.cn.linka.business.service.UserOrderService;
 import com.cn.linka.business.wxpay.sdkUtil.WXPayUtil;
 import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.exception.BusinessExceptionEnum;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
@@ -40,6 +42,9 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class WxPayServiceImpl implements WxPayService {
+
+    @Resource
+    private UserOrderService userOrderService;
     public String appId;
 
     public String mch_id;
@@ -105,7 +110,7 @@ public class WxPayServiceImpl implements WxPayService {
         if ("SUCCESS".equals(return_code) &&  "OK".equals(return_msg)) {
             log.info("微信支付成功拉起");
             String code_url = (String) map.get("code_url");
-            generateQRCode(code_url);
+//            generateQRCode(code_url);
             return code_url;
         } else {
             log.error("微信返回失败：{}",map.toString());
@@ -123,9 +128,10 @@ public class WxPayServiceImpl implements WxPayService {
      * @Version: 2.9
      * @Return: void
      */
+    @Transactional
     @Override
     public void notify(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        log.info("进入支付回调啦啦啦啦*-*");
+        log.info("进入支付回调");
         String resXml = "";
         BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream()));
         String line = null;
@@ -155,9 +161,7 @@ public class WxPayServiceImpl implements WxPayService {
                 return;
             }
             //修改本地数据库操作
-            if (!(userOrderMapper.updateStatus(order_no,otherId) == 1)) {
-                throw new BusException(BusinessExceptionEnum.WX_PAY_BACK_ORDER_FAIL);
-            }
+            userOrderService.completeOrder(order_no,otherId);
             resXml = CommUtils.SUCCESSxml;
         } else {
             resXml = CommUtils.ERRORxml;

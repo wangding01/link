@@ -5,7 +5,6 @@ import com.cn.linka.business.bean.UserOrderBean;
 import com.cn.linka.business.dao.*;
 import com.cn.linka.business.mapper.MemberMenuMapper;
 import com.cn.linka.business.mapper.UserOrderMapper;
-import com.cn.linka.business.service.MemberMenuService;
 import com.cn.linka.business.service.UserOrderService;
 import com.cn.linka.business.wxpay.WxPayDto;
 import com.cn.linka.business.wxpay.WxPayQueryBean;
@@ -14,6 +13,7 @@ import com.cn.linka.common.config.SnowFlake;
 import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.exception.BusinessExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,13 +27,10 @@ public class UserOrderServiceImpl implements UserOrderService {
     private final static String ORDER_INIT_STATUS = "0";
     private final static String ORDER_SUCCESS_STATUS = "1";
     private final static String WX_ORDER_STATUS_SUCCESS = "SUCCESS";//成功
-    private final static String WX_ORDER_STATUS_NOTPAY = "NOTPAY";//未支付
     private final static String WX_ORDER_STATUS_CLOSED = "CLOSED";//已关闭
     private final static String ORDER_CLOSED_STATUS = "2";
-    private final static String WX_ORDER_STATUS_USERPAYING = "USERPAYING";//用户支付中
     private final static String WX_ORDER_STATUS_PAYERROR = "PAYERROR";//支付失败(其他原因，如银行返回失败)
     private final static String ORDER_PAYERROR_STATUS = "3";
-    private final static String WX_ORDER_STATUS_ACCEPT = "ACCEPT";//已接收，等待扣款
     @Resource
     private UserOrderMapper userOrderMapper;
     @Resource
@@ -83,8 +80,10 @@ public class UserOrderServiceImpl implements UserOrderService {
 
     @Override
     public BaseDaoForHttp completeOrder(String orderId, String otherId) {
+        Optional<MemberMenuDao> menuById = memberMenuMapper.getMenuById(userOrderMapper.queryByOrderId(orderId).get().getMemberMenuId());
+        Date endDt = DateUtils.addDays(new Date(), menuById.get().getMenuTime());
         //时间计算
-        if (userOrderMapper.updateStatus(orderId, otherId) < 1) {
+        if (userOrderMapper.updateStatus(orderId, otherId,endDt) < 1) {
             throw new BusException(BusinessExceptionEnum.ORDER_ERROR);
         }
         return BaseDaoForHttp.success();

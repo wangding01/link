@@ -4,6 +4,7 @@ package com.cn.linka.business.mapper;
 import com.cn.linka.business.bean.UserOrderBean;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public interface UserOrderMapper {
 
     void insert(UserOrderBean userOrderBean);
 
-    int updateStatus(String orderId,String otherId);
+    int updateStatus(String orderId, String otherId, Date endDt);
 
     int updateStatusByOrderId(String otherId,String orderStatus);
 }
