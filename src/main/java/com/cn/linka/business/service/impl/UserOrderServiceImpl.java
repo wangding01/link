@@ -63,11 +63,10 @@ public class UserOrderServiceImpl implements UserOrderService {
                 .build();
         String backUrl = "";
         try {
-            backUrl = wxPayService.pay(dto);
+            backUrl = wxPayService.nativePay(dto);
         } catch (Exception e) {
             log.error("微信支付拉起失败：{}", e.getMessage());
         }
-
         return BaseDaoForHttp.success(UserOrderCreateResponse.builder()
                 .wxUrl(backUrl)
                 .orderId(orderId).build());

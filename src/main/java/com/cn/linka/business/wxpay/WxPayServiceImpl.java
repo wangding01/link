@@ -1,11 +1,19 @@
 package com.cn.linka.business.wxpay;
 
 import com.alibaba.fastjson.JSON;
+import com.cn.linka.business.bean.UserOrderBean;
 import com.cn.linka.business.mapper.UserOrderMapper;
 import com.cn.linka.business.wxpay.sdkUtil.WXPayUtil;
 import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.exception.BusinessExceptionEnum;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +23,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by xxs on 2021/7/30 9:56
@@ -28,7 +40,6 @@ import java.util.Map;
 @Slf4j
 @Service
 public class WxPayServiceImpl implements WxPayService {
-    private static final String scene_info = "{\"h5_info\": {\"type\":\"Wap\",\"wap_url\": \"https://www.link.cn\",\"wap_name\": \"linkcn充值\"}}";
     public String appId;
 
     public String mch_id;
@@ -61,9 +72,8 @@ public class WxPayServiceImpl implements WxPayService {
     private UserOrderMapper userOrderMapper;
 
     @Override
-    public String pay(WxPayDto dto) throws Exception {
-        log.info("公众号微信支付, 入参:{}", JSON.toJSONString(dto));
-        String openid = dto.getOpenid();
+    public String nativePay(WxPayDto dto){
+        log.info("微信native支付, 入参:{}", JSON.toJSONString(dto));
         String outTradeNo = dto.getOutTradeNo();
         String body = dto.getBody();
         Integer totalFee = dto.getTotalFee();
@@ -74,24 +84,31 @@ public class WxPayServiceImpl implements WxPayService {
         packageParams.put("mch_id", mch_id);
         packageParams.put("spbill_create_ip", spbill_create_ip);
         packageParams.put("notify_url", notify_url);
-        packageParams.put("trade_type", "MWEB");
-        packageParams.put("scene_info", scene_info);
+        packageParams.put("trade_type", "NATIVE");
         packageParams.put("nonce_str", nonce_str);
         packageParams.put("body", body);
         packageParams.put("out_trade_no", outTradeNo);
         packageParams.put("total_fee", totalFee + "");
-        String xml = WXPayUtil.generateSignedXml(packageParams, key);
-        log.info(xml);
-        String result = CommUtils.httpRequest(CommUtils.unifiedOrderUrl, "POST", xml);
-        Map map = CommUtils.doXMLParse(result);
+        Map map = null;
+        try {
+            String xml = WXPayUtil.generateSignedXml(packageParams, key);
+            log.info(xml);
+            String result = CommUtils.httpRequest(CommUtils.unifiedOrderUrl, "POST", xml);
+            map = CommUtils.doXMLParse(result);
+        }catch (Exception e){
+            log.error("信息转换失败");
+            throw new BusException(BusinessExceptionEnum.WX_PAY_ORDER_FAIL);
+        }
         log.info("统一下单返回map：" + map.toString());
         Object return_code = map.get("return_code");
         Object return_msg = map.get("return_msg");
-        if (return_code == "SUCCESS" && return_msg == "OK") {
+        if ("SUCCESS".equals(return_code) &&  "OK".equals(return_msg)) {
             log.info("微信支付成功拉起");
-            String mweb_url = (String) map.get("mweb_url");
-            return mweb_url;
+            String code_url = (String) map.get("code_url");
+            generateQRCode(code_url);
+            return code_url;
         } else {
+            log.error("微信返回失败：{}",map.toString());
             throw new BusException(BusinessExceptionEnum.WX_PAY_ORDER_FAIL);
         }
     }
@@ -128,6 +145,15 @@ public class WxPayServiceImpl implements WxPayService {
         if ("SUCCESS".equals(returnCode) && "SUCCESS".equals(result_code)) {
             String order_no = (String) map.get("out_trade_no");
             String otherId = (String) map.get("open_id");
+            Optional<UserOrderBean> userOrderBean = userOrderMapper.queryByOrderId(order_no);
+            if(userOrderBean.isPresent() && "1".equals(userOrderBean.get().getOrderStatus())){
+                log.info("该订单已经被处理过，直接返回成功，订单id：{}",order_no);
+                BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
+                out.write(CommUtils.SUCCESSxml.getBytes());
+                out.flush();
+                out.close();
+                return;
+            }
             //修改本地数据库操作
             if (!(userOrderMapper.updateStatus(order_no,otherId) == 1)) {
                 throw new BusException(BusinessExceptionEnum.WX_PAY_BACK_ORDER_FAIL);
@@ -137,7 +163,6 @@ public class WxPayServiceImpl implements WxPayService {
             resXml = CommUtils.ERRORxml;
         }
         log.info("微信支付回调返回数据：" + resXml);
-        log.info("微信支付回调数据结束");
         BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
         out.write(resXml.getBytes());
         out.flush();
@@ -169,7 +194,7 @@ public class WxPayServiceImpl implements WxPayService {
         Object return_msg = map.get("return_msg");
         String openId = (String) map.get("openid");
         String tradeState =  (String) map.get("trade_state");
-        if (return_code == "SUCCESS" && return_msg == "OK") {
+        if ("SUCCESS".equals(return_code) &&  "OK".equals(return_msg)) {
             log.info("订单支付成功");
             return WxPayQueryBean.builder()
                     .orderId(oderId)
@@ -180,5 +205,36 @@ public class WxPayServiceImpl implements WxPayService {
             throw new BusException(BusinessExceptionEnum.WX_PAY_ORDER_CHECK_ERROR);
         }
 
+    }
+
+    /**
+     * 生成二维码
+     * @throws WriterException
+     * @throws IOException
+     */
+    public static void generateQRCode(String code_url) {
+        //生成二维码
+        //设置二维码的尺寸
+        int width = 200;
+        int hight = 200;
+        //创建map
+        Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
+        hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+
+        //创建矩阵对象 调用谷歌提供的
+        try {
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(code_url, BarcodeFormat.QR_CODE, width, hight, hints);
+
+            //创建二维码生成路径
+            String filePath = "D:\\JAVA\\link\\code";
+            String fileName = RandomStringUtils.randomAlphanumeric(10) + ".jpg";
+
+            Path path = FileSystems.getDefault().getPath(filePath, fileName);
+
+            //将创建的矩阵转换成图片
+            MatrixToImageWriter.writeToPath(bitMatrix, "jpg", path);
+        } catch (Exception e) {
+            log.error("二维码生成失败");
+        }
     }
 }

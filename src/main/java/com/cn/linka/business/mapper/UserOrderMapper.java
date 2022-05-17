@@ -13,6 +13,8 @@ public interface UserOrderMapper {
 
     Optional<UserOrderBean> queryAllByOrderId(String userId,String orderId);
 
+    Optional<UserOrderBean> queryByOrderId(String orderId);
+
     void insert(UserOrderBean userOrderBean);
 
     int updateStatus(String orderId,String otherId);

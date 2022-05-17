@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * @create: 2022-05-07 11:08
  */
 public interface WxPayService {
-    String pay(WxPayDto dto) throws Exception;
+    String nativePay(WxPayDto dto) throws Exception;
 
     void notify(HttpServletRequest request, HttpServletResponse response) throws Exception;
 
