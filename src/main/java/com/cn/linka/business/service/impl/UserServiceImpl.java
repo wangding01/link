@@ -11,10 +11,8 @@ import com.cn.linka.common.exception.BusinessExceptionEnum;
 import com.cn.linka.common.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.relational.core.sql.FalseCondition;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -79,7 +77,7 @@ public class UserServiceImpl implements UserService {
             throw new BusException(BusinessExceptionEnum.EMAIL_VERIFY_CODE_ERROR);
         }
         //生产userId
-        String userId = SnowFlake.nextIdString();
+        String userId = "Link"+SnowFlake.nextIdString();
         userMapper.insert(User.builder()
                 .password(password)
                 .phone("邮箱注册-无手机号码")

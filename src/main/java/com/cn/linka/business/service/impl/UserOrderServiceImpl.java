@@ -72,7 +72,7 @@ public class UserOrderServiceImpl implements UserOrderService {
     @Override
     public BaseDaoForHttp<List<UserOrderDao>> getOrder(String userId) {
         List<UserOrderBean> userOrderBeans = userOrderMapper.queryAllByUserId(userId);
-        if (userOrderBeans != null) {
+        if (userOrderBeans == null || userOrderBeans.size() < 1) {
             throw new BusException(BusinessExceptionEnum.THE_USER_NO_ORDER);
         }
         return BaseDaoForHttp.success(userOrderBeans);
@@ -83,7 +83,8 @@ public class UserOrderServiceImpl implements UserOrderService {
         Optional<MemberMenuDao> menuById = memberMenuMapper.getMenuById(userOrderMapper.queryByOrderId(orderId).get().getMemberMenuId());
         Date endDt = DateUtils.addDays(new Date(), menuById.get().getMenuTime());
         //时间计算
-        if (userOrderMapper.updateStatus(orderId, otherId,endDt) < 1) {
+        log.info("开始修改订单信息订单号：{},openId:{}",orderId,otherId);
+        if (userOrderMapper.updateStatus(orderId, otherId, endDt) < 1) {
             throw new BusException(BusinessExceptionEnum.ORDER_ERROR);
         }
         return BaseDaoForHttp.success();
@@ -102,13 +103,13 @@ public class UserOrderServiceImpl implements UserOrderService {
             log.info("订单状态未修改，再次查询微信");
             WxPayQueryBean wxPayQueryBean = wxPayService.checkWxPayOrder(orderId);
             if (WX_ORDER_STATUS_SUCCESS.equals(wxPayQueryBean.getTradeState())) {//成功则修改订单状态成功
-                completeOrder(orderId,wxPayQueryBean.getOpenId());
+                completeOrder(orderId, wxPayQueryBean.getOpenId());
             }
             if (WX_ORDER_STATUS_CLOSED.equals(wxPayQueryBean.getTradeState())) {//订单关闭
-                userOrderMapper.updateStatusByOrderId(orderId,ORDER_CLOSED_STATUS);
+                userOrderMapper.updateStatusByOrderId(orderId, ORDER_CLOSED_STATUS);
             }
             if (WX_ORDER_STATUS_PAYERROR.equals(wxPayQueryBean.getTradeState())) {//订单关闭
-                userOrderMapper.updateStatusByOrderId(orderId,ORDER_PAYERROR_STATUS);
+                userOrderMapper.updateStatusByOrderId(orderId, ORDER_PAYERROR_STATUS);
             }
         }
         return BaseDaoForHttp.success(userOrderMapper.queryAllByOrderId(userId, orderId).get());

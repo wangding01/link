@@ -15,6 +15,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,7 +111,7 @@ public class WxPayServiceImpl implements WxPayService {
         if ("SUCCESS".equals(return_code) &&  "OK".equals(return_msg)) {
             log.info("微信支付成功拉起");
             String code_url = (String) map.get("code_url");
-//            generateQRCode(code_url);
+            generateQRCode(code_url);
             return code_url;
         } else {
             log.error("微信返回失败：{}",map.toString());
@@ -150,9 +151,13 @@ public class WxPayServiceImpl implements WxPayService {
         Object result_code = map.get("result_code");
         if ("SUCCESS".equals(returnCode) && "SUCCESS".equals(result_code)) {
             String order_no = (String) map.get("out_trade_no");
-            String otherId = (String) map.get("open_id");
+            String otherId = (String) map.get("openid");
             Optional<UserOrderBean> userOrderBean = userOrderMapper.queryByOrderId(order_no);
             if(userOrderBean.isPresent() && "1".equals(userOrderBean.get().getOrderStatus())){
+                if(StringUtils.isEmpty(userOrderBean.get().getOrderId())){
+                    log.info("该笔订：{}单需同步用户openid:{}",order_no,otherId);
+                    userOrderService.completeOrder(order_no,otherId);
+                }
                 log.info("该订单已经被处理过，直接返回成功，订单id：{}",order_no);
                 BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
                 out.write(CommUtils.SUCCESSxml.getBytes());
@@ -199,7 +204,7 @@ public class WxPayServiceImpl implements WxPayService {
         String openId = (String) map.get("openid");
         String tradeState =  (String) map.get("trade_state");
         if ("SUCCESS".equals(return_code) &&  "OK".equals(return_msg)) {
-            log.info("订单支付成功");
+            log.info("订单查询成功");
             return WxPayQueryBean.builder()
                     .orderId(oderId)
                     .tradeState(tradeState)
