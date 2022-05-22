@@ -12,6 +12,8 @@ public interface UserOrderService {
 
     BaseDaoForHttp<List<UserOrderDao>> getOrder(String userId);
 
+    BaseDaoForHttp<List<UserOrderDao>> getEffectOrder(String userId);
+
     BaseDaoForHttp completeOrder(String orderId,String otherId);
 
     BaseDaoForHttp<UserOrderDao> getOrderByOrderId(String userId, String orderId);

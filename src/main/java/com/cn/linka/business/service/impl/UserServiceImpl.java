@@ -2,8 +2,11 @@ package com.cn.linka.business.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.extra.mail.MailException;
+import com.cn.linka.business.bean.UserOrderBean;
 import com.cn.linka.business.dao.*;
 import com.cn.linka.business.mapper.UserMapper;
+import com.cn.linka.business.mapper.UserOrderMapper;
+import com.cn.linka.business.service.UserPortalService;
 import com.cn.linka.business.service.UserService;
 import com.cn.linka.common.config.SnowFlake;
 import com.cn.linka.common.exception.BusException;
@@ -34,6 +37,10 @@ public class UserServiceImpl implements UserService {
     private JavaMailSender javaMailSender;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private UserOrderMapper userOrderMapper;
+    @Resource
+    private UserPortalService userPortalService;
 
     @Override
     public List<User> queryUserList() {
@@ -157,6 +164,28 @@ public class UserServiceImpl implements UserService {
         } else {
             return BaseDaoForHttp.success();
         }
+    }
+
+    @Override
+    public BaseDaoForHttp<UserLinkBase> userDetail(String userId) {
+        UserLinkBase userLinkBase = new UserLinkBase();
+        Optional<User> optionalUser = userMapper.getUserByUserId(userId);
+        if (!optionalUser.isPresent()) {
+            throw new BusException(BusinessExceptionEnum.USER_MSG_NOT_EXIST);
+        }
+        userLinkBase.setEmail(optionalUser.get().getEmail());
+        userLinkBase.setPhone(optionalUser.get().getPhone());
+        userLinkBase.setUserId(userId);
+        userLinkBase.setUserName(optionalUser.get().getUserName());
+        userLinkBase.setUserStatus(optionalUser.get().getUserStatus());
+        userLinkBase.setUserImg(optionalUser.get().getUserImg());
+        List<UserOrderBean> effectOrders = userOrderMapper.getEffectOrder(userId);
+        if(effectOrders.size() > 0){
+            userLinkBase.setMemberUntilDate(effectOrders.get(0).getEndDt());
+        }
+        UserPortalDao body = userPortalService.getPortalByUserId(userId).getBody();
+        userLinkBase.setUserPortalDao(body);
+        return BaseDaoForHttp.success(userLinkBase);
     }
 
     /**

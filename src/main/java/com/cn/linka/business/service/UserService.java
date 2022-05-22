@@ -22,4 +22,6 @@ public interface UserService {
     BaseDaoForHttp<User> getUserByUserId(String userId);
 
     BaseDaoForHttp userUpdatePassword(UserUpdatePasswordDao user);
+
+    BaseDaoForHttp<UserLinkBase> userDetail(String userId);
 }

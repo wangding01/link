@@ -4,7 +4,6 @@ import com.cn.linka.business.dao.*;
 import com.cn.linka.business.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -79,5 +78,12 @@ public class UserController {
     @ApiOperation("用户信息查询")
     public BaseDaoForHttp<User> getUserByUserId(String userId) {
         return userService.getUserByUserId(userId);
+    }
+
+    @GetMapping("/user-detail")
+    @ResponseBody
+    @ApiOperation("用户展示信息（包含基本信息-主页信息-会员到期时间）")
+    public BaseDaoForHttp<UserLinkBase> userDetail(String userId) {
+        return userService.userDetail(userId);
     }
 }

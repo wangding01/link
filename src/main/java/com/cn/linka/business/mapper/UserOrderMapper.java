@@ -21,5 +21,7 @@ public interface UserOrderMapper {
     int updateStatus(String orderId, String otherId, Date endDt);
 
     int updateStatusByOrderId(String otherId,String orderStatus);
+
+    List<UserOrderBean> getEffectOrder(String userId);
 }
 

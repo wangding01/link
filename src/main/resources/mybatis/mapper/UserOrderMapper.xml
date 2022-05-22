@@ -8,6 +8,9 @@
     <select id="queryAllByUserId" resultType="com.cn.linka.business.bean.UserOrderBean">
         select * from member_order where user_id = #{userId}
     </select>
+    <select id="getEffectOrder" resultType="com.cn.linka.business.bean.UserOrderBean">
+        select * from member_order where user_id = #{userId} and order_status = 1 and end_dt > now() order by end_dt desc;
+    </select>
     <select id="queryAllByOrderId" resultType="com.cn.linka.business.bean.UserOrderBean">
         select * from member_order where user_id = #{userId} and order_id=#{orderId}
     </select>

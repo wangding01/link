@@ -79,6 +79,12 @@ public class UserOrderServiceImpl implements UserOrderService {
     }
 
     @Override
+    public BaseDaoForHttp<List<UserOrderDao>> getEffectOrder(String userId) {
+        List<UserOrderBean> userOrderDaoList = userOrderMapper.getEffectOrder(userId);
+        return BaseDaoForHttp.success(userOrderDaoList);
+    }
+
+    @Override
     public BaseDaoForHttp completeOrder(String orderId, String otherId) {
         Optional<MemberMenuDao> menuById = memberMenuMapper.getMenuById(userOrderMapper.queryByOrderId(orderId).get().getMemberMenuId());
         Date endDt = DateUtils.addDays(new Date(), menuById.get().getMenuTime());
