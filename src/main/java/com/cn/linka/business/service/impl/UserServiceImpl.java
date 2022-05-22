@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             throw new BusException(BusinessExceptionEnum.EMAIL_VERIFY_CODE_ERROR);
         }
         //生产userId
-        String userId = "Link"+SnowFlake.nextIdString();
+        String userId = "Link" + SnowFlake.nextIdString();
         userMapper.insert(User.builder()
                 .password(password)
                 .phone("邮箱注册-无手机号码")
@@ -180,12 +180,36 @@ public class UserServiceImpl implements UserService {
         userLinkBase.setUserStatus(optionalUser.get().getUserStatus());
         userLinkBase.setUserImg(optionalUser.get().getUserImg());
         List<UserOrderBean> effectOrders = userOrderMapper.getEffectOrder(userId);
-        if(effectOrders.size() > 0){
+        if (effectOrders.size() > 0) {
             userLinkBase.setMemberUntilDate(effectOrders.get(0).getEndDt());
         }
         UserPortalDao body = userPortalService.getPortalByUserId(userId).getBody();
         userLinkBase.setUserPortalDao(body);
         return BaseDaoForHttp.success(userLinkBase);
+    }
+
+    @Override
+    public BaseDaoForHttp<UserLogin> userWxLogin(String openId, String wxNickName, String headUrl) {
+        Optional<User> optionalUser = userMapper.selectByOpenId(openId);
+        if (optionalUser.isPresent()) {
+            String token = JwtUtils.getToken(optionalUser.get());
+            return BaseDaoForHttp.success(User.toUserLogin(optionalUser.get(), token));
+        } else {
+            //生产userId
+            String userId = "Link" + SnowFlake.nextIdString();
+            User build = User.builder()
+                    .phone("无手机号码")
+                    .userName(wxNickName)
+                    .userId(userId)
+                    .openId(openId)
+                    .userImg(headUrl)
+                    .createDt(new Date())
+                    .build();
+            userMapper.insert(build);
+        }
+        Optional<User> optionalUserNew = userMapper.selectByOpenId(openId);
+        String token = JwtUtils.getToken(optionalUserNew.get());
+        return BaseDaoForHttp.success(User.toUserLogin(optionalUserNew.get(), token));
     }
 
     /**

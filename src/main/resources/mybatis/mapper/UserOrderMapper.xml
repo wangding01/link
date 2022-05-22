@@ -49,6 +49,13 @@
         </set>
         where order_id = #{orderId}
     </update>
+    <update id="syncOtherId" parameterType="com.cn.linka.business.bean.UserOrderBean">
+        update member_order
+        <set>
+            <if test="otherId != null and otherId != ''">other_id = #{otherId}</if>
+        </set>
+        where order_id = #{orderId}
+    </update>
     <update id="updateStatusByOrderId" parameterType="com.cn.linka.business.bean.UserOrderBean">
         update member_order
         <set>

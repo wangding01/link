@@ -15,6 +15,7 @@ public class UserLogin {
     private String phone;
     private String userStatus;
     private String userImg;
+    private String openId;
     private Date createDt;
     private Date updateDt;
     private String token;

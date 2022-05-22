@@ -86,10 +86,16 @@ public class UserOrderServiceImpl implements UserOrderService {
 
     @Override
     public BaseDaoForHttp completeOrder(String orderId, String otherId) {
+        Optional<UserOrderBean> userOrderBean = userOrderMapper.queryByOrderId(orderId);
+        List<UserOrderBean> effectOrder = userOrderMapper.getEffectOrder(userOrderBean.get().getUserId());
+        Date startDate = new Date();
+        if (effectOrder.size() > 0) {
+            startDate = effectOrder.get(0).getEndDt();
+        }
         Optional<MemberMenuDao> menuById = memberMenuMapper.getMenuById(userOrderMapper.queryByOrderId(orderId).get().getMemberMenuId());
-        Date endDt = DateUtils.addDays(new Date(), menuById.get().getMenuTime());
+        Date endDt = DateUtils.addDays(startDate, menuById.get().getMenuTime());
         //时间计算
-        log.info("开始修改订单信息订单号：{},openId:{}",orderId,otherId);
+        log.info("开始修改订单信息订单号：{},openId:{},开始计算时间点为：{},有效期为：{}", orderId, otherId,startDate.toString(),menuById.get().getMenuTime());
         if (userOrderMapper.updateStatus(orderId, otherId, endDt) < 1) {
             throw new BusException(BusinessExceptionEnum.ORDER_ERROR);
         }

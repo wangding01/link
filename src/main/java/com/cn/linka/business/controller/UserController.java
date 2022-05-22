@@ -86,4 +86,10 @@ public class UserController {
     public BaseDaoForHttp<UserLinkBase> userDetail(String userId) {
         return userService.userDetail(userId);
     }
+    @GetMapping("/user-wx-login")
+    @ResponseBody
+    @ApiOperation("用户微信登录")
+    public BaseDaoForHttp<UserLogin> userWxLogin(String openId, String wxNickName,String headUrl) {
+        return userService.userWxLogin(openId, wxNickName,headUrl);
+    }
 }

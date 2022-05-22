@@ -1,6 +1,5 @@
 package com.cn.linka.business.mapper;
 
-import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.User;
 import com.cn.linka.business.dao.UserUpdate;
 import com.cn.linka.business.dao.UserUpdatePasswordDao;
@@ -22,5 +21,7 @@ public interface UserMapper {
     Optional<User> getUserByUserId(String userId);
 
     int userUpdatePassword(UserUpdatePasswordDao user);
+
+    Optional<User> selectByOpenId(String openId);
 }
 

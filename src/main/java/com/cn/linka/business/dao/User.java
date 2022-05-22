@@ -10,6 +10,7 @@ public class User {
     private String userId;
     private String userName;
     private String password;
+    private String openId;
     private String email;
     private String phone;
     private String userImg;
@@ -26,6 +27,8 @@ public class User {
                 .createDt(user.getCreateDt())
                 .updateDt(user.getCreateDt())
                 .token(token)
+                .userImg(user.getUserImg())
+                .openId(user.getOpenId())
                 .build();
     }
 }

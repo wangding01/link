@@ -1,13 +1,16 @@
 package com.cn.linka.business.controller;
 
-import com.cn.linka.business.dao.*;
-import com.cn.linka.business.service.FileService;
+import com.cn.linka.business.dao.BaseDaoForHttp;
+import com.cn.linka.business.dao.UserOrderCreateRequest;
+import com.cn.linka.business.dao.UserOrderCreateResponse;
+import com.cn.linka.business.dao.UserOrderDao;
 import com.cn.linka.business.service.UserOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +30,9 @@ public class UserOrderController {
 
     @PostMapping(value = "/create-order")
     @ApiOperation("创建订单")
-    public BaseDaoForHttp<UserOrderCreateResponse> createOrder(@RequestBody UserOrderCreateRequest userOrderCreateRequest) {
+    public BaseDaoForHttp<UserOrderCreateResponse> createOrder(@RequestBody UserOrderCreateRequest userOrderCreateRequest,HttpServletRequest request) {
+        String remoteHost = getRemoteHost(request);
+        userOrderCreateRequest.setRealIp(remoteHost);
         return userOrderService.createOrder(userOrderCreateRequest);
     }
 
@@ -42,4 +47,24 @@ public class UserOrderController {
     public BaseDaoForHttp<UserOrderDao> getOrderByOrderId(String userId, String orderId) {
         return userOrderService.getOrderByOrderId(userId, orderId);
     }
+    public String getRemoteHost(HttpServletRequest request){
+        String ip = request.getHeader("x-forwarded-for");
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getHeader("X-Real-IP");
+        }
+        if(ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)){
+            ip = request.getRemoteAddr();
+        }
+        return ip.equals("0:0:0:0:0:0:0:1")?"127.0.0.1":ip;
+    }
+
 }

@@ -156,7 +156,7 @@ public class WxPayServiceImpl implements WxPayService {
             if(userOrderBean.isPresent() && "1".equals(userOrderBean.get().getOrderStatus())){
                 if(StringUtils.isEmpty(userOrderBean.get().getOrderId())){
                     log.info("该笔订：{}单需同步用户openid:{}",order_no,otherId);
-                    userOrderService.completeOrder(order_no,otherId);
+                    userOrderMapper.syncOtherId(order_no,otherId);
                 }
                 log.info("该订单已经被处理过，直接返回成功，订单id：{}",order_no);
                 BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());

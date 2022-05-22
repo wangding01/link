@@ -11,6 +11,9 @@
     <select id="selectByEmail" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.User">
         select * from user where email = #{email}
     </select>
+    <select id="selectByOpenId" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.User">
+        select * from user where open_id = #{openId}
+    </select>
     <select id="getUserByUserId" parameterType="java.lang.String" resultType="com.cn.linka.business.dao.User">
         select * from user where user_id = #{userId}
     </select>
@@ -20,6 +23,7 @@
             `user_name`,
             `password`,
             `user_img`,
+            `open_id`,
             `phone`,
             `email`,
             `create_dt`
@@ -30,6 +34,7 @@
                 #{userName},
                 #{password},
                 #{userImg},
+                #{openId},
                 #{phone},
                 #{email},
                 #{createDt}

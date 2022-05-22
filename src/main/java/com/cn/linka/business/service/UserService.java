@@ -24,4 +24,6 @@ public interface UserService {
     BaseDaoForHttp userUpdatePassword(UserUpdatePasswordDao user);
 
     BaseDaoForHttp<UserLinkBase> userDetail(String userId);
+
+    BaseDaoForHttp<UserLogin> userWxLogin(String openId, String wxNickName, String headUrl);
 }

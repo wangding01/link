@@ -51,7 +51,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/check-email",
                         "/registered-email",
                         "/get-portal-by-index",
-                        "/user/theme/get-theme-by-id")
+                        "/user/theme/get-theme-by-id",
+                        "/user-wx-login")
                 .excludePathPatterns("/swagger-ui/**", "/swagger-resources/**", "/webjars/**", "/v3/**", "/swagger-ui.html/**")
                 .excludePathPatterns("/admin/**")
                 .excludePathPatterns("/error")
@@ -61,6 +62,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/link-test/**")
                 .excludePathPatterns("/thymeleaf/**")
                 .excludePathPatterns("/wxPay/**")//上线删除
+                .excludePathPatterns("/api/ucenter/wx/**")//上线删除
                 .excludePathPatterns("/linkPath/*");
     }
     /**
