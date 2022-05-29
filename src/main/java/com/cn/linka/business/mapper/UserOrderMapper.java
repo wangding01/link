@@ -2,6 +2,7 @@ package com.cn.linka.business.mapper;
 
 
 import com.cn.linka.business.bean.UserOrderBean;
+import com.cn.linka.business.dao.UserOrderDao;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -27,5 +28,9 @@ public interface UserOrderMapper {
     int syncOtherId(String order_no, String otherId);
 
     List<UserOrderBean> getOrderPage(String userId, int pageSize, long nextId);
+
+    int getTotalSizeByUserId(String userId);
+
+    List<UserOrderDao> getOrderPageNo(String userId, int startNo, int pageSize);
 }
 

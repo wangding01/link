@@ -1,10 +1,7 @@
 package com.cn.linka.business.service;
 
 import com.cn.linka.business.bean.LinkPageNext;
-import com.cn.linka.business.dao.BaseDaoForHttp;
-import com.cn.linka.business.dao.UserOrderCreateRequest;
-import com.cn.linka.business.dao.UserOrderCreateResponse;
-import com.cn.linka.business.dao.UserOrderDao;
+import com.cn.linka.business.dao.*;
 
 import java.util.List;
 
@@ -20,4 +17,6 @@ public interface UserOrderService {
     BaseDaoForHttp<UserOrderDao> getOrderByOrderId(String userId, String orderId);
 
     BaseDaoForHttp<LinkPageNext> getOrderPage(String userId, int pageSize, long nextId);
+
+    BaseDaoForHttpByPageNo<List<UserOrderDao>> getOrderPageNo(String userId, int pageSize, int offset);
 }

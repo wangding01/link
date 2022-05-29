@@ -1,10 +1,7 @@
 package com.cn.linka.business.controller;
 
 import com.cn.linka.business.bean.LinkPageNext;
-import com.cn.linka.business.dao.BaseDaoForHttp;
-import com.cn.linka.business.dao.UserOrderCreateRequest;
-import com.cn.linka.business.dao.UserOrderCreateResponse;
-import com.cn.linka.business.dao.UserOrderDao;
+import com.cn.linka.business.dao.*;
 import com.cn.linka.business.service.UserOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,8 +42,14 @@ public class UserOrderController {
 
     @GetMapping(value = "/get-order-by-userId-page")
     @ApiOperation("查询订单-下拉分页")
-    public BaseDaoForHttp<LinkPageNext> getOrderPage(String userId,int pageSize,long nextId) {
+    public BaseDaoForHttp<LinkPageNext> getOrderPageNext(String userId,int pageSize,long nextId) {
         return userOrderService.getOrderPage(userId,pageSize,nextId);
+    }
+
+    @GetMapping(value = "/get-order-by-userId-page-no")
+    @ApiOperation("查询订单-带页分页")
+    public BaseDaoForHttpByPageNo<List<UserOrderDao>> getOrderPageNo(String userId, int pageSize, int offset) {
+        return userOrderService.getOrderPageNo(userId,pageSize,offset);
     }
 
     @GetMapping(value = "/get-order-by-orderId")

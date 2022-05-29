@@ -139,7 +139,15 @@ public class UserOrderServiceImpl implements UserOrderService {
             isLast = true;
         }
         Long maxId = list.get(0).getId();
-        return BaseDaoForHttp.success(LinkPageNext.createBasePage(maxId,isLast,pageSize,list));
+        return BaseDaoForHttp.success(LinkPageNext.createBasePage(maxId, isLast, pageSize, list));
+    }
+
+    @Override
+    public BaseDaoForHttpByPageNo<List<UserOrderDao>> getOrderPageNo(String userId, int pageSize, int offset) {
+        int total = userOrderMapper.getTotalSizeByUserId(userId);
+        int startNo = pageSize * (offset-1);
+        List<UserOrderDao> list = userOrderMapper.getOrderPageNo(userId, startNo, pageSize);
+        return BaseDaoForHttpByPageNo.success(list, offset, total, pageSize);
     }
 
 }
