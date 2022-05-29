@@ -25,5 +25,7 @@ public interface UserOrderMapper {
     List<UserOrderBean> getEffectOrder(String userId);
 
     int syncOtherId(String order_no, String otherId);
+
+    List<UserOrderBean> getOrderPage(String userId, int pageSize, long nextId);
 }
 

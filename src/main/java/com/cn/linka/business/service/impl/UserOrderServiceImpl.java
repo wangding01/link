@@ -1,6 +1,7 @@
 package com.cn.linka.business.service.impl;
 
 
+import com.cn.linka.business.bean.LinkPageNext;
 import com.cn.linka.business.bean.UserOrderBean;
 import com.cn.linka.business.dao.*;
 import com.cn.linka.business.mapper.MemberMenuMapper;
@@ -95,7 +96,7 @@ public class UserOrderServiceImpl implements UserOrderService {
         Optional<MemberMenuDao> menuById = memberMenuMapper.getMenuById(userOrderMapper.queryByOrderId(orderId).get().getMemberMenuId());
         Date endDt = DateUtils.addDays(startDate, menuById.get().getMenuTime());
         //时间计算
-        log.info("开始修改订单信息订单号：{},openId:{},开始计算时间点为：{},有效期为：{}", orderId, otherId,startDate.toString(),menuById.get().getMenuTime());
+        log.info("开始修改订单信息订单号：{},openId:{},开始计算时间点为：{},有效期为：{}", orderId, otherId, startDate.toString(), menuById.get().getMenuTime());
         if (userOrderMapper.updateStatus(orderId, otherId, endDt) < 1) {
             throw new BusException(BusinessExceptionEnum.ORDER_ERROR);
         }
@@ -126,4 +127,19 @@ public class UserOrderServiceImpl implements UserOrderService {
         }
         return BaseDaoForHttp.success(userOrderMapper.queryAllByOrderId(userId, orderId).get());
     }
+
+    @Override
+    public BaseDaoForHttp<LinkPageNext> getOrderPage(String userId, int pageSize, long nextId) {
+        List<UserOrderBean> list = userOrderMapper.getOrderPage(userId, pageSize, nextId);
+        if (list == null || list.size() < 1) {
+            throw new BusException(BusinessExceptionEnum.THE_USER_NO_ORDER);
+        }
+        Boolean isLast = false;
+        if (list.size() < pageSize) {
+            isLast = true;
+        }
+        Long maxId = list.get(0).getId();
+        return BaseDaoForHttp.success(LinkPageNext.createBasePage(maxId,isLast,pageSize,list));
+    }
+
 }
