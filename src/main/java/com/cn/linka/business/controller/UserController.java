@@ -35,6 +35,13 @@ public class UserController {
         return userService.registered(email, verifyCode, password);
     }
 
+    @PostMapping("/registered-email-body")
+    @ResponseBody
+    @ApiOperation("邮箱注册-body")
+    public BaseDaoForHttp<UserRegisteredDao> registeredForEmailBody(@RequestBody @Validated UserEmailRegisterRequest userEmailRegisterRequest) {
+        return userService.registered(userEmailRegisterRequest.getEmail(), userEmailRegisterRequest.getVerifyCode(), userEmailRegisterRequest.getPassword());
+    }
+
     @GetMapping("/check-email")
     @ResponseBody
     @ApiOperation("检查邮箱是否被注册")
