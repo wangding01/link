@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
+
 /**
  * @program: linka
  * @description:
@@ -33,8 +35,19 @@ public class GlobalExceptionHandler {
         return result;
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public BaseDaoForHttp handleBusException(ConstraintViolationException ex) {
+        BaseDaoForHttp result = BaseDaoForHttp.fail();
+        if (StringUtils.isNotBlank(ex.getMessage())) {
+            result.setErrMsg(ex.getMessage());
+        }
+        result.setErrorCode(500);
+        return result;
+    }
+
     /**
      * 其他异常
+     *
      * @param ex
      * @return
      */

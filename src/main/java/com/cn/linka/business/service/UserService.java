@@ -26,4 +26,6 @@ public interface UserService {
     BaseDaoForHttp<UserLinkBase> userDetail(String userId);
 
     BaseDaoForHttp<UserLogin> userWxLogin(String openId, String wxNickName, String headUrl);
+
+    BaseDaoForHttp<UserLogin> userEmailVerifyCodeLogin(String email, String verifyCode);
 }

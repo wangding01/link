@@ -52,7 +52,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/registered-email",
                         "/get-portal-by-index",
                         "/user/theme/get-theme-by-id",
-                        "/user-wx-login")
+                        "/user-wx-login",
+                        "/user-verifyCode-login")
                 .excludePathPatterns("/swagger-ui/**", "/swagger-resources/**", "/webjars/**", "/v3/**", "/swagger-ui.html/**")
                 .excludePathPatterns("/admin/**")
                 .excludePathPatterns("/error")

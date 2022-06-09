@@ -28,7 +28,7 @@ public class JwtUtils {
 
         Calendar instance = Calendar.getInstance();
         //默认令牌过期时间7天
-        instance.add(Calendar.DATE, 7);
+        instance.add(Calendar.DATE, 60);
         JWTCreator.Builder builder = JWT.create();
         builder.withClaim("userId", u.getUserId())
                 .withClaim("password", u.getPassword());
@@ -43,7 +43,6 @@ public class JwtUtils {
         if (StringUtils.isEmpty(token)) {
             throw new BusException(BusinessExceptionEnum.AUTHORIZE_IS_NOT_NULL);
         }
-        //获取登录用户真正的密码假如数据库查出来的是123456
         JWTVerifier build = JWT.require(Algorithm.HMAC256(secret)).build();
         return build.verify(token);
     }

@@ -56,16 +56,16 @@ public class UserServiceImpl implements UserService {
         // 设置邮件接收者
         message.setTo(to);
         // 设置邮件的主题
-        message.setSubject("注册验证码");
+        message.setSubject("LINK-FANS验证码");
         // 设置邮件的正文
         Integer code = RandomUtil.randomInt(100000, 999999);
-        String text = "LINKCN:您的验证码为：" + code + ",请勿泄露给他人。";
+        String text = "您的验证码为：" + code + "，有效期为3分钟，请勿泄露给他人。";
         message.setText(text);
         // 发送邮件
         try {
             javaMailSender.send(message);
             //将验证码保存到redis缓存中，设置有效时间为5分钟
-            stringRedisTemplate.opsForValue().set(to, String.valueOf(code), 5, TimeUnit.MINUTES);
+            stringRedisTemplate.opsForValue().set(to, String.valueOf(code), 3, TimeUnit.MINUTES);
             return BaseDaoForHttp.success();
         } catch (MailException e) {
             e.printStackTrace();
@@ -210,6 +210,21 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUserNew = userMapper.selectByOpenId(openId);
         String token = JwtUtils.getToken(optionalUserNew.get());
         return BaseDaoForHttp.success(User.toUserLogin(optionalUserNew.get(), token));
+    }
+
+    @Override
+    public BaseDaoForHttp<UserLogin> userEmailVerifyCodeLogin(String email, String verifyCode) {
+        Optional<User> optionalUser = userMapper.selectByEmail(email);
+        if (optionalUser.isPresent()) {
+            String token = JwtUtils.getToken(optionalUser.get());
+            if (checkEmailCodeStatus(email, verifyCode)) {
+                return BaseDaoForHttp.success(User.toUserLogin(optionalUser.get(), token));
+            }else{
+                throw new BusException(BusinessExceptionEnum.EMAIL_VERIFY_CODE_ERROR);
+            }
+        } else {
+            throw new BusException(BusinessExceptionEnum.USERNAME_PASSWORD_ERROR);
+        }
     }
 
     /**
