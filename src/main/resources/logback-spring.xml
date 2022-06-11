@@ -59,7 +59,7 @@
             </layout>
         </appender>
 
-        <root level="warn">
+        <root level="info">
             <appender-ref ref="PROD_FILE" />
         </root>
     </springProfile>
