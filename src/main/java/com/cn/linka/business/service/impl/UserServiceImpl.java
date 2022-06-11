@@ -4,6 +4,8 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.extra.mail.MailException;
 import com.cn.linka.business.bean.UserOrderBean;
 import com.cn.linka.business.dao.*;
+import com.cn.linka.business.mapper.MemberThemeMapper;
+import com.cn.linka.business.mapper.ThemeMapper;
 import com.cn.linka.business.mapper.UserMapper;
 import com.cn.linka.business.mapper.UserOrderMapper;
 import com.cn.linka.business.service.UserPortalService;
@@ -14,6 +16,7 @@ import com.cn.linka.common.exception.BusinessExceptionEnum;
 import com.cn.linka.common.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -21,14 +24,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
+    private static final String MEMBER_TYPE = "1";//会员类型
+    private static final String NOT_MEMBER_TYPE = "2";//非会员类型
     @Resource
     private UserMapper userMapper;
     @Value("${spring.mail.username}")
@@ -41,6 +44,10 @@ public class UserServiceImpl implements UserService {
     private UserOrderMapper userOrderMapper;
     @Resource
     private UserPortalService userPortalService;
+    @Resource
+    private MemberThemeMapper memberThemeMapper;
+    @Resource
+    private ThemeMapper themeMapper;
 
     @Override
     public List<User> queryUserList() {
@@ -169,6 +176,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public BaseDaoForHttp<UserLinkBase> userDetail(String userId) {
         UserLinkBase userLinkBase = new UserLinkBase();
+        log.info("用户基本信息查询");
         Optional<User> optionalUser = userMapper.getUserByUserId(userId);
         if (!optionalUser.isPresent()) {
             throw new BusException(BusinessExceptionEnum.USER_MSG_NOT_EXIST);
@@ -179,11 +187,30 @@ public class UserServiceImpl implements UserService {
         userLinkBase.setUserName(optionalUser.get().getUserName());
         userLinkBase.setUserStatus(optionalUser.get().getUserStatus());
         userLinkBase.setUserImg(optionalUser.get().getUserImg());
+        log.info("会员基本信息查询");
         List<UserOrderBean> effectOrders = userOrderMapper.getEffectOrder(userId);
+        MemberThemeDao memberThemeDao = memberThemeMapper.selectThemeMember(NOT_MEMBER_TYPE);//非会员主题
         if (effectOrders.size() > 0) {
+            log.info("会员主题查询");
             userLinkBase.setMemberUntilDate(effectOrders.get(0).getEndDt());
+            memberThemeDao = memberThemeMapper.selectThemeMember(MEMBER_TYPE);//会员主题
         }
+        List<ThemeDao> themeDaos = themeMapper.selectByIds(new HashSet<>(Arrays.asList(memberThemeDao.getThemeIds())));
+        List<MemberThemeSimpleData> memberThemeSimpleDataList = new ArrayList<>();
+        for (ThemeDao themeDao : themeDaos) {
+            MemberThemeSimpleData memberThemeSimpleData = new MemberThemeSimpleData();
+            BeanUtils.copyProperties(themeDao,memberThemeSimpleData);
+            memberThemeSimpleDataList.add(memberThemeSimpleData);
+        }
+        userLinkBase.setMemberThemeSimpleData(memberThemeSimpleDataList);
         UserPortalDao body = userPortalService.getPortalByUserId(userId).getBody();
+        Optional<ThemeDao> themeById = themeMapper.getThemeById(body.getDefaultThemeId());
+        if(themeById.isPresent()){
+            MemberThemeSimpleData memberThemeSimpleData = new MemberThemeSimpleData();
+            BeanUtils.copyProperties(themeById.get(),memberThemeSimpleData);
+            body.setMemberThemeSimpleData(memberThemeSimpleData);
+        }
+
         userLinkBase.setUserPortalDao(body);
         return BaseDaoForHttp.success(userLinkBase);
     }
@@ -219,7 +246,7 @@ public class UserServiceImpl implements UserService {
             String token = JwtUtils.getToken(optionalUser.get());
             if (checkEmailCodeStatus(email, verifyCode)) {
                 return BaseDaoForHttp.success(User.toUserLogin(optionalUser.get(), token));
-            }else{
+            } else {
                 throw new BusException(BusinessExceptionEnum.EMAIL_VERIFY_CODE_ERROR);
             }
         } else {

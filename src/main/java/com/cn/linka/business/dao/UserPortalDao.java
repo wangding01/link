@@ -1,7 +1,6 @@
 package com.cn.linka.business.dao;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.cn.linka.business.bean.UserPortalBean;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +10,6 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @program: linka
@@ -36,6 +34,8 @@ public class UserPortalDao implements Serializable {
     private String domain;
     @ApiModelProperty("用户默认主题id")
     private Long defaultThemeId;
+    @ApiModelProperty("用户默认主题信息")
+    private MemberThemeSimpleData memberThemeSimpleData;
     private List<FactorPortalDao> factorPortalDaos;
     private Date createDt;
 

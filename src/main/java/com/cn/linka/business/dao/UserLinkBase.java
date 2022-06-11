@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户对外展示信息
@@ -22,4 +23,5 @@ public class UserLinkBase {
     private Date MemberUntilDate;
     @ApiModelProperty("用户主页信息")
     private UserPortalDao userPortalDao;
+    private List<MemberThemeSimpleData> memberThemeSimpleData;
 }

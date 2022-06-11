@@ -11,6 +11,13 @@
     <select id="getThemeById" parameterType = "java.lang.Long" resultType="com.cn.linka.business.dao.ThemeDao">
         select * from theme where id = #{id}
     </select>
+    <select id="selectByIds" resultType="com.cn.linka.business.dao.ThemeDao">
+        select * from theme where id in
+        <foreach collection="themeIds" index="index" item="id" separator="," close=")" open="(">
+            ${id}
+        </foreach>
+        order by create_dt desc
+    </select>
     <insert id="insert" parameterType="com.cn.linka.business.dao.ThemeDao">
         INSERT INTO `theme` (
             `theme_name`,

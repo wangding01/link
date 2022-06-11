@@ -100,7 +100,7 @@ public class UserController {
 
     @GetMapping("/user-detail")
     @ResponseBody
-    @ApiOperation("用户展示信息（包含基本信息-主页信息-会员到期时间）")
+    @ApiOperation("用户展示信息（包含基本信息-主页信息-会员到期时间-主题详情）")
     public BaseDaoForHttp<UserLinkBase> userDetail(String userId) {
         return userService.userDetail(userId);
     }
