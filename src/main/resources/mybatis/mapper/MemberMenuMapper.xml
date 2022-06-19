@@ -8,6 +8,9 @@
     <select id="queryAll" resultType="com.cn.linka.business.dao.MemberMenuDao">
         select * from members_menu
     </select>
+    <select id="queryAllToUser" resultType="com.cn.linka.business.dao.MemberMenuDao">
+        select * from members_menu where menu_status = '1'
+    </select>
     <select id="getMenuById" resultType="com.cn.linka.business.dao.MemberMenuDao">
         select * from members_menu where id =  #{id}
     </select>

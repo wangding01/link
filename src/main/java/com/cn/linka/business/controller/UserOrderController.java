@@ -2,6 +2,7 @@ package com.cn.linka.business.controller;
 
 import com.cn.linka.business.bean.LinkPageNext;
 import com.cn.linka.business.dao.*;
+import com.cn.linka.business.service.MemberMenuService;
 import com.cn.linka.business.service.UserOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,6 +26,14 @@ import java.util.List;
 public class UserOrderController {
     @Resource
     private UserOrderService userOrderService;
+    @Resource
+    private MemberMenuService memberMenuService;
+
+    @GetMapping(value = "/get-menus-to-user")
+    @ApiOperation("用户查询会员菜单信息")
+    public BaseDaoForHttp<List<MemberMenuDao>> getAllToUser() {
+        return memberMenuService.getAllToUser();
+    }
 
     @PostMapping(value = "/create-order")
     @ApiOperation("创建订单")

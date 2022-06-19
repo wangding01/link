@@ -2,11 +2,8 @@ package com.cn.linka.business.service.impl;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.MemberMenuDao;
-import com.cn.linka.business.dao.ThemeDao;
 import com.cn.linka.business.mapper.MemberMenuMapper;
-import com.cn.linka.business.mapper.ThemeMapper;
 import com.cn.linka.business.service.MemberMenuService;
-import com.cn.linka.business.service.ThemeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -41,5 +38,10 @@ public class MemberMenuServiceImpl implements MemberMenuService {
     @Override
     public MemberMenuDao getMenuById(Long id) {
         return memberMenuMapper.getMenuById(id).get();
+    }
+
+    @Override
+    public BaseDaoForHttp<List<MemberMenuDao>> getAllToUser() {
+        return BaseDaoForHttp.success(memberMenuMapper.queryAllToUser());
     }
 }

@@ -2,7 +2,6 @@ package com.cn.linka.business.service;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.MemberMenuDao;
-import com.cn.linka.business.dao.ThemeDao;
 
 import java.util.List;
 
@@ -14,4 +13,6 @@ public interface MemberMenuService {
     BaseDaoForHttp update(MemberMenuDao memberMenuDao);
 
     MemberMenuDao getMenuById(Long id);
+
+    BaseDaoForHttp<List<MemberMenuDao>> getAllToUser();
 }
