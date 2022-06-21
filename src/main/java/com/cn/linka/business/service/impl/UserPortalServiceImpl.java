@@ -48,8 +48,10 @@ public class UserPortalServiceImpl implements UserPortalService {
             throw new BusException(BusinessExceptionEnum.USER_PORTAL_IS_NULL);
         }
         UserPortalDao userPortalDao = UserPortalBean.transferToDao(portalByUserId.get());
-        List<FactorPortalDao> collect = userPortalDao.getFactorPortalDaos().stream().sorted(Comparator.comparing(FactorPortalDao::getOrder)).collect(Collectors.toList());
-        userPortalDao.setFactorPortalDaos(collect);
+        if(userPortalDao.getFactorPortalDaos()!=null && userPortalDao.getFactorPortalDaos().size()>0){
+            List<FactorPortalDao> collect = userPortalDao.getFactorPortalDaos().stream().sorted(Comparator.comparing(FactorPortalDao::getOrder)).collect(Collectors.toList());
+            userPortalDao.setFactorPortalDaos(collect);
+        }
         return BaseDaoForHttp.success(userPortalDao);
     }
 
@@ -83,7 +85,9 @@ public class UserPortalServiceImpl implements UserPortalService {
             throw new BusException(BusinessExceptionEnum.USER_ID_ISNULL);
         }
         if (userPortalMapper.portalUpdate(UserPortalDao.transferToBean(userPortalDao)) < 1) {
-            throw new BusException(BusinessExceptionEnum.USER_PORTAL_UPDATE_FAIL);
+            log.info("当前无主页数据，新增操作");
+            userPortalDao.setCreateDt(new Date());
+            userPortalMapper.insert(UserPortalDao.transferToBean(userPortalDao));
         }
         UserPortalDao byUserIdInternal = getByUserIdInternal(userPortalDao.getUserId());
         stringRedisTemplate.opsForValue().set(byUserIdInternal.getIndexUrl(), JSON.toJSONString(byUserIdInternal),60, TimeUnit.DAYS);
