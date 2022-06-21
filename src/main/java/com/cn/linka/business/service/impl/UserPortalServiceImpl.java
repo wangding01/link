@@ -114,8 +114,10 @@ public class UserPortalServiceImpl implements UserPortalService {
             throw new BusException(BusinessExceptionEnum.USER_PORTAL_IS_NULL);
         }
         UserPortalDao userPortalDao = UserPortalBean.transferToDao(portalByUserId.get());
-        List<FactorPortalDao> collect = userPortalDao.getFactorPortalDaos().stream().sorted(Comparator.comparing(FactorPortalDao::getOrder)).collect(Collectors.toList());
-        userPortalDao.setFactorPortalDaos(collect);
+        if(userPortalDao.getFactorPortalDaos()!=null && userPortalDao.getFactorPortalDaos().size()>0){
+            List<FactorPortalDao> collect = userPortalDao.getFactorPortalDaos().stream().sorted(Comparator.comparing(FactorPortalDao::getOrder)).collect(Collectors.toList());
+            userPortalDao.setFactorPortalDaos(collect);
+        }
         return userPortalDao;
     }
 }
