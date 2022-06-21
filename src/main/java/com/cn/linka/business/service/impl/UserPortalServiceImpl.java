@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Comparator;
@@ -37,7 +38,6 @@ public class UserPortalServiceImpl implements UserPortalService {
     public BaseDaoForHttp portalInsert(UserPortalDao userPortalDao) {
         userPortalDao.setCreateDt(new Date());
         userPortalMapper.insert(UserPortalDao.transferToBean(userPortalDao));
-        stringRedisTemplate.opsForValue().set(userPortalDao.getIndexUrl(), JSON.toJSONString(getByUserIdInternal(userPortalDao.getIndexUrl())),60, TimeUnit.DAYS);
         return BaseDaoForHttp.success();
     }
 
@@ -77,6 +77,7 @@ public class UserPortalServiceImpl implements UserPortalService {
     }
 
     @Override
+    @Transactional
     public BaseDaoForHttp portalUpdate(UserPortalDao userPortalDao) {
         if (StringUtils.isEmpty(userPortalDao.getUserId())) {
             throw new BusException(BusinessExceptionEnum.USER_ID_ISNULL);
@@ -84,7 +85,8 @@ public class UserPortalServiceImpl implements UserPortalService {
         if (userPortalMapper.portalUpdate(UserPortalDao.transferToBean(userPortalDao)) < 1) {
             throw new BusException(BusinessExceptionEnum.USER_PORTAL_UPDATE_FAIL);
         }
-        stringRedisTemplate.opsForValue().set(userPortalDao.getIndexUrl(), JSON.toJSONString(getByUserIdInternal(userPortalDao.getIndexUrl())),60, TimeUnit.DAYS);
+        UserPortalDao byUserIdInternal = getByUserIdInternal(userPortalDao.getUserId());
+        stringRedisTemplate.opsForValue().set(byUserIdInternal.getIndexUrl(), JSON.toJSONString(byUserIdInternal),60, TimeUnit.DAYS);
         return BaseDaoForHttp.success();
     }
 

@@ -16,11 +16,13 @@ import com.cn.linka.common.exception.BusinessExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -104,6 +106,7 @@ public class UserOrderServiceImpl implements UserOrderService {
     }
 
     @Override
+    @Transactional
     public BaseDaoForHttp<UserOrderDao> getOrderByOrderId(String userId, String orderId) {
         Optional<UserOrderBean> userOrderBean = userOrderMapper.queryAllByOrderId(userId, orderId);
         if (!userOrderBean.isPresent()) {
@@ -145,9 +148,29 @@ public class UserOrderServiceImpl implements UserOrderService {
     @Override
     public BaseDaoForHttpByPageNo<List<UserOrderDao>> getOrderPageNo(String userId, int pageSize, int offset) {
         int total = userOrderMapper.getTotalSizeByUserId(userId);
-        int startNo = pageSize * (offset-1);
-        List<UserOrderDao> list = userOrderMapper.getOrderPageNo(userId, startNo, pageSize);
+        int startNo = pageSize * (offset - 1);
+        List<UserOrderBean> listFirst = userOrderMapper.getOrderPageNo(userId, startNo, pageSize);
+        syncOrderPage(listFirst.stream().filter(order->order.getOrderStatus().equals(ORDER_INIT_STATUS)).map(UserOrderBean::getOrderId).collect(Collectors.toList()));
+        List<UserOrderBean> list = userOrderMapper.getOrderPageNo(userId, startNo, pageSize);
         return BaseDaoForHttpByPageNo.success(list, offset, total, pageSize);
     }
 
+    /**
+     * 内部同步订单操作
+     */
+    public void syncOrderPage(List<String> orderIds) {
+        for (String orderId : orderIds) {
+            WxPayQueryBean wxPayQueryBean = wxPayService.checkWxPayOrder(orderId);
+            if (WX_ORDER_STATUS_SUCCESS.equals(wxPayQueryBean.getTradeState())) {//成功则修改订单状态成功
+                completeOrder(orderId, wxPayQueryBean.getOpenId());
+            }
+            if (WX_ORDER_STATUS_CLOSED.equals(wxPayQueryBean.getTradeState())) {//订单关闭
+                userOrderMapper.updateStatusByOrderId(orderId, ORDER_CLOSED_STATUS);
+            }
+            if (WX_ORDER_STATUS_PAYERROR.equals(wxPayQueryBean.getTradeState())) {//订单关闭
+                userOrderMapper.updateStatusByOrderId(orderId, ORDER_PAYERROR_STATUS);
+            }
+        }
+
+    }
 }

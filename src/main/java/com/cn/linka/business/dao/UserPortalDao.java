@@ -42,7 +42,9 @@ public class UserPortalDao implements Serializable {
     public static UserPortalBean transferToBean(UserPortalDao userPortalDao){
         UserPortalBean userPortalBean = new UserPortalBean();
         BeanUtils.copyProperties(userPortalDao,userPortalBean);
-        userPortalBean.setAllMsg(JSON.toJSONString( userPortalDao.getFactorPortalDaos()));
+        if(userPortalDao.getFactorPortalDaos()!=null && userPortalDao.getFactorPortalDaos().size()>1){
+            userPortalBean.setAllMsg(JSON.toJSONString(userPortalDao.getFactorPortalDaos()));
+        }
         return userPortalBean;
     }
 }
