@@ -1,4 +1,6 @@
 package com.cn.linka.business.service.impl;
+
+import com.alibaba.fastjson.JSON;
 import com.cn.linka.business.bean.UserPortalBean;
 import com.cn.linka.business.dao.BaseDaoForHttp;
 import com.cn.linka.business.dao.FactorPortalDao;
@@ -9,6 +11,7 @@ import com.cn.linka.common.exception.BusException;
 import com.cn.linka.common.exception.BusinessExceptionEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +19,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -25,7 +29,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserPortalServiceImpl implements UserPortalService {
     @Resource
+    private StringRedisTemplate stringRedisTemplate;
+    @Resource
     private UserPortalMapper userPortalMapper;
+
     @Override
     public BaseDaoForHttp portalInsert(UserPortalDao userPortalDao) {
         userPortalDao.setCreateDt(new Date());
@@ -36,7 +43,7 @@ public class UserPortalServiceImpl implements UserPortalService {
     @Override
     public BaseDaoForHttp<UserPortalDao> getPortalByUserId(String userId) {
         Optional<UserPortalBean> portalByUserId = userPortalMapper.selectByUserId(userId);
-        if(!portalByUserId.isPresent()){
+        if (!portalByUserId.isPresent()) {
             throw new BusException(BusinessExceptionEnum.USER_PORTAL_IS_NULL);
         }
         UserPortalDao userPortalDao = UserPortalBean.transferToDao(portalByUserId.get());
@@ -47,24 +54,33 @@ public class UserPortalServiceImpl implements UserPortalService {
 
     @Override
     public BaseDaoForHttp<UserPortalDao> getPortalByIndex(String index) {
+        UserPortalDao userPortalDao = new UserPortalDao();
+        if (stringRedisTemplate.hasKey(index)) {
+            log.info("redis缓存查询");
+            String jsonStr = stringRedisTemplate.opsForValue().get(index);
+            userPortalDao = JSON.parseObject(jsonStr, UserPortalDao.class);
+            return BaseDaoForHttp.success(userPortalDao);
+        }
+
         Optional<UserPortalBean> portalByIndex = userPortalMapper.getPortalByIndex(index);
-        if(!portalByIndex.isPresent()){
+        if (!portalByIndex.isPresent()) {
             throw new BusException(BusinessExceptionEnum.USER_PORTAL_IS_NULL);
         }
-        UserPortalDao userPortalDao = UserPortalBean.transferToDao(portalByIndex.get());
-        if(userPortalDao.getFactorPortalDaos()!=null){
+        userPortalDao = UserPortalBean.transferToDao(portalByIndex.get());
+        if (userPortalDao.getFactorPortalDaos() != null) {
             List<FactorPortalDao> collect = userPortalDao.getFactorPortalDaos().stream().sorted(Comparator.comparing(FactorPortalDao::getOrder)).collect(Collectors.toList());
             userPortalDao.setFactorPortalDaos(collect);
         }
+        stringRedisTemplate.opsForValue().set(index, JSON.toJSONString(userPortalDao),60, TimeUnit.DAYS);
         return BaseDaoForHttp.success(userPortalDao);
     }
 
     @Override
     public BaseDaoForHttp portalUpdate(UserPortalDao userPortalDao) {
-        if(StringUtils.isEmpty(userPortalDao.getUserId())){
+        if (StringUtils.isEmpty(userPortalDao.getUserId())) {
             throw new BusException(BusinessExceptionEnum.USER_ID_ISNULL);
         }
-        if(userPortalMapper.portalUpdate(UserPortalDao.transferToBean(userPortalDao))<1){
+        if (userPortalMapper.portalUpdate(UserPortalDao.transferToBean(userPortalDao)) < 1) {
             throw new BusException(BusinessExceptionEnum.USER_PORTAL_UPDATE_FAIL);
         }
         return BaseDaoForHttp.success();
@@ -73,7 +89,7 @@ public class UserPortalServiceImpl implements UserPortalService {
     @Override
     public BaseDaoForHttp checkIndexExist(String index) {
         Optional<UserPortalBean> portalByIndex = userPortalMapper.getPortalByIndex(index);
-        if(portalByIndex.isPresent()){
+        if (portalByIndex.isPresent()) {
             throw new BusException(BusinessExceptionEnum.INDEX_EXIST);
         }
         return BaseDaoForHttp.success();
