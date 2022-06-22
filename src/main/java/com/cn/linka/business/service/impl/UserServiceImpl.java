@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(User.builder()
                 .password(password)
                 .phone("邮箱注册-无手机号码")
-                .userName("Link用户")
+                .userName(email)
                 .userId(userId)
                 .userImg("")
                 .createDt(new Date())
