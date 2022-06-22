@@ -6,12 +6,14 @@ import com.cn.linka.business.dao.UserPortalDao;
 import com.cn.linka.business.service.UserPortalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.Pattern;
 
 /**
  * @program: linka
@@ -19,6 +21,7 @@ import javax.annotation.Resource;
  * @author: wangding
  * @create: 2022-04-11 14:39
  */
+@Validated
 @RestController
 @Api(value = "用户主页controller", tags = {"用户主页接口"})
 public class UserPortalController {
@@ -27,12 +30,12 @@ public class UserPortalController {
 
     @PostMapping("/portal-insert")
     @ApiOperation("主页新增")
-    public BaseDaoForHttp portalInsert(@RequestBody UserPortalDao userPortalDao) {
+    public BaseDaoForHttp portalInsert(@RequestBody @Validated UserPortalDao userPortalDao) {
         return userPortalService.portalInsert(userPortalDao);
     }
     @PostMapping("/portal-update")
     @ApiOperation("主页修改-修改信息是全量送给服务端")
-    public BaseDaoForHttp portalUpdate(@RequestBody UserPortalDao userPortalDao) {
+    public BaseDaoForHttp portalUpdate(@RequestBody @Validated UserPortalDao userPortalDao) {
         return userPortalService.portalUpdate(userPortalDao);
     }
     @GetMapping("/get-portal-by-userId")
@@ -47,7 +50,7 @@ public class UserPortalController {
     }
     @GetMapping("/check-index-exist")
     @ApiOperation("检查index是否被使用")
-    public BaseDaoForHttp checkIndexExist(String index) {
+    public BaseDaoForHttp checkIndexExist(@Pattern(regexp = "^[0-9a-zA-Z_]{1,20}$",message = "链接非法")String index) {
         return userPortalService.checkIndexExist(index);
     }
 }

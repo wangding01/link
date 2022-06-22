@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ public class UserPortalDao implements Serializable {
     private String introduction;
     @ApiModelProperty("详解介绍")
     private String userDetail;
+    @Pattern(regexp = "^[0-9a-zA-Z_]{1,20}$",message = "链接非法")
     @ApiModelProperty("用户二级域名")
     private String indexUrl;
     @ApiModelProperty("用户域名")
