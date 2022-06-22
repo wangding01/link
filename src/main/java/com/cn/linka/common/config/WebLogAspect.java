@@ -40,18 +40,8 @@ public class WebLogAspect {
 
         // 打印请求相关参数
         log.info("========================================== Start ==========================================");
-        log.info("URL            : {}", request.getRequestURL().toString());
-        // 打印请求 url
         String token = request.getHeader("Authorization");
-        log.info("Authorization            : {}",token);
-        // 打印 Http method
-        log.info("HTTP Method    : {}", request.getMethod());
-        // 打印调用 controller 的全路径以及执行方法
-        log.info("Class Method   : {}.{}", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
-        // 打印请求的 IP
-        log.info("IP             : {}", request.getRemoteAddr());
-        // 打印请求入参
-//        log.info("Request Args   : {}", new Gson().toJson(joinPoint.getArgs()));
+        log.info("URL:{},Authorization: {},Class Method : {}.{},IP : {},Request Args: {}", request.getRequestURL().toString(),token,joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName(),request.getRemoteAddr(), new Gson().toJson(joinPoint.getArgs()));
     }
 
     /**
