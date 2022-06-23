@@ -6,7 +6,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,16 +71,17 @@ public class zuowenPachong {
                 String title = doc.getElementsByTag("title").first().text().replace("作文网","").replace("观后感网","");
                 System.out.println(title);
                 Elements contentTexts = doc.getElementsByClass("content").select("p");
+                List<String> details = new ArrayList<>();
                 StringBuilder sb = new StringBuilder();
                 for (Element contentText : contentTexts) {
                     if (!contentText.text().contains("jtcl.org.cn") && !contentText.text().contains("作文网")) {
-                        sb.append(contentText.text()).append("\r");
+                        details.add( sb.append(contentText.text()).append("\r").toString());
                     }
                 }
                 Map<String, Object> dataMap = new HashMap<>();
                 dataMap.put("title", title);
                 dataMap.put("detail", sb);
-                RunPoiUtils.createFileZuowen(numTag + "-" + title, dataMap);
+                RunPoiUtils.createFileList(numTag + "-" + title,title, details);
                 System.out.println("标号" + numTag + "  文章名：" + title + "生成完成");
             } catch (Exception e) {
                 System.out.println(numTag + "失败");

@@ -6,7 +6,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,36 +17,36 @@ import java.util.Map;
  * @author: wangding
  * @create: 2022-04-20 16:37
  */
-public class Pachong02 {
+public class Wenshubang {
     public static void main(String[] args) {
         runDocThread();
     }
     public static void createProcess(Integer startId,Integer endId){
         // 解析Url地址 参数1：访问的url，参数2：访问的超时时间
         Integer numTag = 0;
-        for (int i = startId; i < endId; i++) {
-            numTag = i;
+//        for (int i = startId; i < endId; i++) {
+//            numTag = i;
             String url = "http://www.wenshubang.com/gongzuozongjie/"+"477657"+".html";
             try {
                 Document doc = Jsoup.parse(new URL(url), 10000);
                 // 使用选择器，获取想要的内容
                 String title = doc.getElementsByTag("title").first().text();
                 StringBuilder sb = new StringBuilder();
-                Elements contentTexts = doc.getElementById("content").select("p");
+                List<String> details = new ArrayList<>();
+                Elements contentTexts = doc.getElementsByClass("content").select("p");
                 for (Element contentText : contentTexts) {
-                    if (!contentText.text().contains("★") && !contentText.text().contains("▼")) {
-                        sb.append(contentText.text()).append("\r");
-                    }
+                    details.add(contentText.text());
                 }
                 Map<String, Object> dataMap = new HashMap<>();
                 dataMap.put("title", title);
                 dataMap.put("detail", sb);
-                RunPoiUtils.createFile(numTag+"-"+title,dataMap);
+                RunPoiUtils.createFileList(numTag+"-"+title,title,details);
+//                RunPoiUtils.createFile(numTag+"-"+title,dataMap);
                 System.out.println("标号"+numTag+"  文章名："+title + "生成完成");
             } catch (Exception e) {
                 System.out.println(numTag+"失败");
             }
-        }
+//        }
     }
     public static void runDocThread(){
         Thread thread1 = new Thread(new Runnable() {
