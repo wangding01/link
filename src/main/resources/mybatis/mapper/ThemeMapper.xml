@@ -8,8 +8,14 @@
     <select id="queryTheme" resultType="com.cn.linka.business.dao.ThemeDao">
         select * from theme order by create_dt desc
     </select>
+    <select id="getTotal" resultType="java.lang.Integer">
+        select count(id) from theme
+    </select>
     <select id="getThemeById" parameterType = "java.lang.Long" resultType="com.cn.linka.business.dao.ThemeDao">
         select * from theme where id = #{id}
+    </select>
+    <select id="getAllThemePage" resultType="com.cn.linka.business.dao.ThemeDao">
+        select * from theme order by id desc limit #{offset} ,#{pageSize}
     </select>
     <select id="selectByIds" resultType="com.cn.linka.business.dao.ThemeDao">
         select * from theme where id in

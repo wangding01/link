@@ -1,6 +1,7 @@
 package com.cn.linka.business.service.impl;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
+import com.cn.linka.business.dao.BaseDaoForHttpByPageNo;
 import com.cn.linka.business.dao.ThemeDao;
 import com.cn.linka.business.mapper.ThemeMapper;
 import com.cn.linka.business.service.ThemeService;
@@ -38,5 +39,13 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public BaseDaoForHttp<ThemeDao> getThemeById(Long id) {
         return BaseDaoForHttp.success(themeMapper.getThemeById(id).orElse(null));
+    }
+
+    @Override
+    public BaseDaoForHttpByPageNo<List<ThemeDao>> getAllThemePage(int pageSize, int offset) {
+        int total = themeMapper.getTotal();
+        offset = pageSize * (offset - 1);
+        List<ThemeDao> themeDaoList = themeMapper.getAllThemePage(pageSize, offset);
+        return BaseDaoForHttpByPageNo.success(themeDaoList, offset, total, themeDaoList.size());
     }
 }

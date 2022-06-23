@@ -1,16 +1,12 @@
 package com.cn.linka.business.controller;
 
 import com.cn.linka.business.dao.BaseDaoForHttp;
-import com.cn.linka.business.dao.FileUploadDao;
+import com.cn.linka.business.dao.BaseDaoForHttpByPageNo;
 import com.cn.linka.business.dao.ThemeDao;
-import com.cn.linka.business.dao.UserRegisteredDao;
-import com.cn.linka.business.service.FileService;
 import com.cn.linka.business.service.ThemeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,6 +28,12 @@ public class ThemeController {
     @ApiOperation("查询所有的主题")
     public BaseDaoForHttp<List<ThemeDao>> getAllTheme() {
         return themeService.getAllTheme();
+    }
+
+    @GetMapping(value = "/get-all-theme-page")
+    @ApiOperation("查询所有的主题-分页")
+    public BaseDaoForHttpByPageNo<List<ThemeDao>> getAllThemePage(int pageSize, int offset) {
+        return themeService.getAllThemePage(pageSize,offset);
     }
 
     @PostMapping("/insert")

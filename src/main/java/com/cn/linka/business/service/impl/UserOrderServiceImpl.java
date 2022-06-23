@@ -152,7 +152,7 @@ public class UserOrderServiceImpl implements UserOrderService {
         List<UserOrderBean> listFirst = userOrderMapper.getOrderPageNo(userId, startNo, pageSize);
         syncOrderPage(listFirst.stream().filter(order->order.getOrderStatus().equals(ORDER_INIT_STATUS)).map(UserOrderBean::getOrderId).collect(Collectors.toList()));
         List<UserOrderBean> list = userOrderMapper.getOrderPageNo(userId, startNo, pageSize);
-        return BaseDaoForHttpByPageNo.success(list, offset, total, pageSize);
+        return BaseDaoForHttpByPageNo.success(list, offset, total, list.size());
     }
 
     /**

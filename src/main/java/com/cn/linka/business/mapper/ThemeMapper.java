@@ -19,5 +19,9 @@ public interface ThemeMapper {
     Optional<ThemeDao> getThemeById(Long id);
 
     List<ThemeDao> selectByIds(HashSet<String> themeIds);
+
+    List<ThemeDao> getAllThemePage(int pageSize, int offset);
+
+    int getTotal();
 }
 
